@@ -7,7 +7,7 @@
 .card-inner{position:absolute;inset:5% 6.3%;background:#fff;border:.23cqw solid #101010;border-radius:6.8cqw;overflow:hidden}
 .card-number{position:absolute;left:6.1%;top:2.2%;font-size:8.6cqw;font-weight:900;line-height:1;letter-spacing:-.025em;color:#080808}
 .card-art{position:absolute;left:5%;top:11.1%;width:90%;height:65.5%;object-fit:fill;display:block}
-.card-name{position:absolute;left:5%;width:90%;bottom:3.4%;height:18.2%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:7.8cqw;line-height:1.14;font-weight:900;letter-spacing:-.022em;color:#080808;text-transform:uppercase;overflow:hidden;overflow-wrap:break-word;hyphens:auto}
+.card-name{position:absolute;left:5%;width:90%;bottom:3.4%;height:18.2%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:7.8cqw;line-height:1.14;font-weight:900;letter-spacing:-.022em;color:#080808;text-transform:uppercase;overflow:hidden;overflow-wrap:normal;hyphens:none}
 .card-name.long{font-size:5.8cqw}.card-name.very-long{font-size:4.7cqw}
 .cover-logo-reserve{position:absolute;left:21%;top:16%;width:58%;height:30%;border: .45cqw solid #0c2d59;border-radius:3cqw;background:#fffaf0;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 .3cqw #edb442;pointer-events:none}.cover-logo-reserve span{font-size:3.1cqw;font-weight:700;color:#7b8390;text-align:center}
 .cover .card-art{object-fit:cover}.cover .card-name{font-size:5.2cqw;line-height:1.12}
