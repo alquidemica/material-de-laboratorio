@@ -1,0 +1,212 @@
+{
+  "1": {
+    "nombre": "Vaso de precipitados",
+    "descripcion": "Se usa para contener, mezclar y calentar sustancias, así como para estimar volúmenes de líquidos sin realizar mediciones de alta precisión.",
+    "marco": "#ccbe88"
+  },
+  "2": {
+    "nombre": "Matraz Erlenmeyer",
+    "descripcion": "Se usa para contener, mezclar y calentar líquidos. Su forma cónica permite agitar su contenido con menor riesgo de derrames.",
+    "marco": "#9f8acc"
+  },
+  "3": {
+    "nombre": "Tubo de ensayo",
+    "descripcion": "Se usa para contener pequeñas cantidades de sustancias y realizar reacciones o calentamientos a pequeña escala.",
+    "marco": "#ccbb8a"
+  },
+  "4": {
+    "nombre": "Mechero Bunsen",
+    "descripcion": "Se usa como fuente de calor mediante una llama cuya entrada de aire puede regularse para modificar la temperatura y el tipo de combustión.",
+    "marco": "#89b3cc"
+  },
+  "5": {
+    "nombre": "Gradilla",
+    "descripcion": "Se usa para sostener, ordenar y transportar tubos de ensayo en posición vertical.",
+    "marco": "#8acc8e"
+  },
+  "6": {
+    "nombre": "Soporte universal",
+    "descripcion": "Se usa como estructura para sujetar pinzas, anillos y otros accesorios durante montajes experimentales.",
+    "marco": "#cca875"
+  },
+  "7": {
+    "nombre": "Probeta",
+    "descripcion": "Se usa para medir volúmenes de líquidos con una precisión mayor que la de un vaso de precipitados, aunque menor que la del material volumétrico de alta precisión.",
+    "marco": "#cc85a6"
+  },
+  "8": {
+    "nombre": "Matraz bola",
+    "descripcion": "Se usa para contener y calentar líquidos, especialmente cuando se busca distribuir el calor de manera uniforme durante una reacción o destilación.",
+    "marco": "#84aecc"
+  },
+  "9": {
+    "nombre": "Escobillón",
+    "descripcion": "Se usa para limpiar el interior de tubos de ensayo, matraces y otros recipientes de laboratorio de cuello estrecho.",
+    "marco": "#8acc8a"
+  },
+  "10": {
+    "nombre": "Tripié",
+    "descripcion": "Se usa como soporte para colocar recipientes sobre una fuente de calor, normalmente acompañado de una malla de asbesto o rejilla.",
+    "marco": "#cca872"
+  },
+  "11": {
+    "nombre": "Malla de asbesto",
+    "descripcion": "Se coloca sobre un tripié o anillo de hierro para sostener recipientes y distribuir el calor de la llama de manera más uniforme. En laboratorios actuales se prefieren rejillas cerámicas sin asbesto debido a los riesgos de este material para la salud.",
+    "marco": "#9e8acc"
+  },
+  "12": {
+    "nombre": "Pipeta graduada",
+    "descripcion": "Se usa para medir y transferir diferentes volúmenes de líquido mediante una escala graduada.",
+    "marco": "#cc85a6"
+  },
+  "13": {
+    "nombre": "Anillo de hierro",
+    "descripcion": "Se fija al soporte universal para sostener embudos, mallas, recipientes u otros materiales durante un montaje experimental.",
+    "marco": "#ccc08a"
+  },
+  "14": {
+    "nombre": "Pinzas para tubo de ensayo",
+    "descripcion": "Se usan para sujetar tubos de ensayo, especialmente cuando se calientan o cuando no es seguro tocarlos directamente.",
+    "marco": "#ccbf8a"
+  },
+  "15": {
+    "nombre": "Pinza de tres dedos",
+    "descripcion": "Se usa para sujetar firmemente material de laboratorio, como matraces, buretas u otros recipientes, a un soporte universal.",
+    "marco": "#84aecc"
+  },
+  "16": {
+    "nombre": "Embudo de separación",
+    "descripcion": "Se usa para separar líquidos inmiscibles de diferente densidad, permitiendo retirar primero la fase inferior mediante una llave.",
+    "marco": "#8acc8b"
+  },
+  "17": {
+    "nombre": "Embudo de vidrio",
+    "descripcion": "Se usa para trasvasar líquidos o sólidos finos a recipientes de boca estrecha y, con papel filtro, para realizar filtraciones.",
+    "marco": "#8acc8e"
+  },
+  "18": {
+    "nombre": "Espátula",
+    "descripcion": "Se usa para tomar, transferir o manipular pequeñas cantidades de sustancias sólidas.",
+    "marco": "#cca972"
+  },
+  "19": {
+    "nombre": "Agitador de vidrio",
+    "descripcion": "Se usa para mezclar soluciones manualmente y también puede ayudar a dirigir el flujo de un líquido durante un trasvase.",
+    "marco": "#83aecc"
+  },
+  "20": {
+    "nombre": "Parrilla de calentamiento con agitación",
+    "descripcion": "Se usa para calentar sustancias y, con una barra magnética, agitarlas de forma continua y controlada.",
+    "marco": "#8accc2"
+  },
+  "21": {
+    "nombre": "Balanza granataria",
+    "descripcion": "Se usa para medir la masa de objetos o sustancias mediante el equilibrio de pesas deslizables sobre brazos graduados.",
+    "marco": "#8acc91"
+  },
+  "22": {
+    "nombre": "Pipeta Beral",
+    "descripcion": "Se usa para transferir pequeñas cantidades de líquido gota a gota. Es útil cuando no se requiere medir un volumen con precisión.",
+    "marco": "#cc87a6"
+  },
+  "23": {
+    "nombre": "Tapón de hule",
+    "descripcion": "Se usa para cerrar tubos, matraces y otros recipientes, ayudando a evitar derrames, contaminación o pérdida de sustancias.",
+    "marco": "#ccab6d"
+  },
+  "24": {
+    "nombre": "Crisol de porcelana",
+    "descripcion": "Se usa para calentar sustancias a altas temperaturas y realizar procesos como calcinación, fusión o calentamiento intenso.",
+    "marco": "#82adcc"
+  },
+  "25": {
+    "nombre": "Cápsula de porcelana",
+    "descripcion": "Se usa principalmente para calentar y evaporar líquidos, concentrar soluciones o secar pequeñas cantidades de sustancias.",
+    "marco": "#8acc93"
+  },
+  "26": {
+    "nombre": "Mortero con mano",
+    "descripcion": "Se usa para triturar, pulverizar y mezclar sustancias sólidas mediante presión y fricción.",
+    "marco": "#ac88cc"
+  },
+  "27": {
+    "nombre": "Frasco ámbar",
+    "descripcion": "Se usa para almacenar sustancias y reactivos sensibles a la luz. Su vidrio de color ámbar reduce la exposición a parte de la radiación luminosa.",
+    "marco": "#ccb271"
+  },
+  "28": {
+    "nombre": "Termómetro",
+    "descripcion": "Se usa para medir la temperatura de una sustancia o de un sistema durante un experimento.",
+    "marco": "#79c9cc"
+  },
+  "29": {
+    "nombre": "Bureta",
+    "descripcion": "Se usa para dispensar y medir con precisión volúmenes variables de líquido, especialmente durante titulaciones.",
+    "marco": "#cc8987"
+  },
+  "30": {
+    "nombre": "Cristalizador",
+    "descripcion": "Se usa para favorecer la evaporación de disolventes y la formación de cristales a partir de una disolución.",
+    "marco": "#6a9dcc"
+  },
+  "31": {
+    "nombre": "Matraz volumétrico",
+    "descripcion": "Se usa para preparar disoluciones con un volumen final exacto. Su marca de aforo indica el volumen para el que fue calibrado.",
+    "marco": "#ab8acc"
+  },
+  "32": {
+    "nombre": "Pinzas para crisol",
+    "descripcion": "Se usan para sujetar y trasladar crisoles u otros objetos calientes sin tocarlos directamente con las manos.",
+    "marco": "#cca26c"
+  },
+  "33": {
+    "nombre": "Vidrio de reloj",
+    "descripcion": "Se usa para contener pequeñas muestras, evaporar pequeñas cantidades de líquido o cubrir vasos de precipitados.",
+    "marco": "#cc928a"
+  },
+  "34": {
+    "nombre": "Triángulo de porcelana",
+    "descripcion": "Se usa para sostener un crisol durante su calentamiento directo con una llama, normalmente apoyado sobre un anillo de hierro.",
+    "marco": "#8aadcc"
+  },
+  "35": {
+    "nombre": "Lámpara de alcohol",
+    "descripcion": "Se usa como fuente de calor mediante la combustión de alcohol. Produce una llama adecuada para calentamientos moderados.",
+    "marco": "#ccbb8a"
+  },
+  "36": {
+    "nombre": "Piseta",
+    "descripcion": "Se usa para dispensar chorros controlados de agua destilada u otros líquidos, por ejemplo para enjuagar material de laboratorio.",
+    "marco": "#a68acc"
+  },
+  "37": {
+    "nombre": "Pinzas con nuez",
+    "descripcion": "Se usan para sujetar material de laboratorio al soporte universal y mantenerlo firmemente en la posición necesaria para un montaje.",
+    "marco": "#8acc9f"
+  },
+  "38": {
+    "nombre": "Tubo refrigerante",
+    "descripcion": "Se utiliza para condensar vapores mediante el paso de un fluido refrigerante por una camisa exterior. En un montaje inclinado, el agua entra por la conexión inferior y sale por la superior.",
+    "marco": "#8acc95"
+  },
+  "39": {
+    "nombre": "Matraz de destilación",
+    "descripcion": "Se utiliza para calentar una mezcla y conducir los vapores formados hacia un refrigerante a través de su tubo lateral, durante una destilación.",
+    "marco": "#cc7fa1"
+  },
+  "40": {
+    "nombre": "Frasco con gotero",
+    "descripcion": "Se utiliza para almacenar y dispensar pequeñas cantidades de líquidos gota a gota, sin medir volúmenes exactos.",
+    "marco": "#ccb772"
+  },
+  "41": {
+    "nombre": "Manguera de látex",
+    "descripcion": "Se utiliza como conexión flexible para conducir agua o gases entre distintos componentes de un montaje de laboratorio, cuando su compatibilidad química lo permite.",
+    "marco": "#a88acc"
+  },
+  "42": {
+    "nombre": "Propipeta",
+    "descripcion": "Dispositivo que permite aspirar y dispensar líquidos usando una pipeta, evitando la succión con la boca.",
+    "marco": "#cc888e"
+  }
+}
