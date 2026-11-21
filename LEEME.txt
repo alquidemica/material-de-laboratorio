@@ -1,0 +1,23 @@
+MATERIAL DE LABORATORIO · VERSIÓN 2 · ESTUDIO LIBRE
+
+Publicación: subir al repositorio GitHub Pages el contenido de esta carpeta (no el ZIP tal cual). index.html debe estar en la raíz.
+Abrir desde servidor web o GitHub Pages; materiales.json se obtiene mediante fetch() y algunos navegadores bloquean la lectura al abrir index.html con doble clic (file://).
+
+ARCHIVOS PARA AJUSTES RÁPIDOS
+materiales.json: nombres, descripciones, colores del marco (marco: #RRGGBB), nivel mínimo y categorías múltiples.
+estilos.css: geometría de la carta, textos, fondos, botones. Variables principales: .card-shell, .card-inner, .card-art, .card-name, .cover-logo-reserve.
+aplicacion.js: barajar, avance, teclas, diálogo compartido, populateCard(), CATEGORIES y TOTAL.
+estudio.js: filtros, buscador, parrilla y navegación entre modos.
+cartas/numero.webp: imágenes. No contienen los marcos, números ni nombres.
+fondo-laboratorio.webp: fondo general de la página.
+
+Para sumar una carta: colocar 43.webp en cartas/, añadir ficha 43 a materiales.json con nivel (1, 2 o 3) y categorias (arreglo de IDs existentes), cambiar TOTAL a 43 en aplicacion.js.
+El modo estudio libre usa una parrilla de 5, 4, 3 o 2 columnas según el ancho de ventana. Busca por nombre sin distinguir acentos o mayúsculas y combina la búsqueda con categoría y nivel mínimo.
+Las 42 fichas tienen nivel 1 provisionalmente. Cambiar nivel a 2 o 3 cuando se apruebe la clasificación académica. El acceso por nivel es un filtro pedagógico, no una protección comercial. La lotería conserva el mazo completo por ahora.
+Categorías: 1 Medición volumétrica; 2 Sujeción y soporte; 3 Calentamiento; 4 Contención y reacción; 5 Separación y destilación; 6 Medición de propiedades; 7 Manipulación y transferencia; 8 Almacenamiento y cierre; 9 Limpieza. Todos = 0 (no se asigna a las fichas).
+La parrilla no incluye la portada. Cerrar una descripción conserva filtros y posición. Alternar el modo conserva el mazo actual.
+Los minijuegos y el modo de estudio aleatorio específico quedan pendientes.
+
+ACTUALIZACIÓN DESDE V1: sustituir index.html, estilos.css, aplicacion.js y materiales.json; añadir estudio.js. Las imágenes no han cambiado. Se recomienda actualizar LEEME.txt también. Hacer un solo commit con todos los cambios y recargar la página después del despliegue.
+Las fichas de 38-42 se redactaron para esta versión: verificar contenido editorial antes de publicar.
+La portada mantiene una reserva visual para el futuro logotipo, sin marca aún.

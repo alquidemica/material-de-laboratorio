@@ -7,27 +7,36 @@ const status=$('status'), mainBtn=$('mainBtn'), shuffleBtn=$('shuffleBtn'), desc
 const modal=$('descriptionModal'), descriptionTitle=$('descriptionTitle'), descriptionText=$('descriptionText'), closeBtn=$('closeDescriptionBtn');
 let materials={}, images=new Map(), deck=[], position=-1, currentCard=0;
 let playing=false, finished=false, ready=false, loading=true, changing=false, modalOpen=false;
-function syncButtons(){mainBtn.disabled=loading||changing||modalOpen;shuffleBtn.disabled=loading||changing||modalOpen;descriptionBtn.disabled=loading||changing||modalOpen||currentCard===0||!materials[currentCard]?.descripcion;}
+let activeMode='lottery', descriptionTrigger=null;
+const CATEGORIES = {1:'Medición volumétrica',2:'Sujeción y soporte',3:'Calentamiento',4:'Contención y reacción',5:'Separación y destilación',6:'Medición de propiedades',7:'Manipulación y transferencia',8:'Almacenamiento y cierre',9:'Limpieza'};
+function syncButtons(){mainBtn.disabled=loading||changing||modalOpen;shuffleBtn.disabled=loading||changing||modalOpen;descriptionBtn.disabled=loading||changing||modalOpen||currentCard===0||!materials[currentCard]?.descripcion;$('studyMode').disabled=loading||changing||modalOpen;$('lotteryMode').disabled=changing||modalOpen;}
+// Una sola plantilla lógica para lotería y estudio libre.
+function populateCard(element,id){
+ const m=materials[id]||{}, art=element.querySelector('.card-art'), name=element.querySelector('.card-name');
+ element.classList.toggle('cover',id===0);
+ element.style.setProperty('--outer',id===0?'#a65add':m.marco||'#54cdbc');
+ art.src=images.get(id)?.src||`cartas/${id}.webp`;
+ art.alt=id===0?'Ilustración de portada del laboratorio':m.nombre||`Material ${id}`;
+ element.querySelector('.card-number').textContent=id;
+ name.textContent=id===0?'LOTERÍA DE MATERIAL DEL LABORATORIO':m.nombre||`Material ${id}`;
+ name.classList.toggle('long',id!==0&&(m.nombre||'').length>20);
+ name.classList.toggle('very-long',id!==0&&(m.nombre||'').length>31);
+}
 function renderCard(id){
  currentCard=id;
- let m=materials[id]||{};
- card.classList.toggle('cover',id===0);
- card.style.setProperty('--outer',id===0?'#a65add':m.marco||'#54cdbc');
- cardArt.src=images.get(id)?.src||`cartas/${id}.webp`;
- cardArt.alt=id===0?'Ilustración de portada del laboratorio':m.nombre||`Material ${id}`;
- cardNumber.textContent=id;
- cardName.textContent=id===0?'LOTERÍA DE MATERIAL DEL LABORATORIO':m.nombre||`Material ${id}`;
- cardName.classList.toggle('long',id!==0&&(m.nombre||'').length>20);
- cardName.classList.toggle('very-long',id!==0&&(m.nombre||'').length>31);
+ populateCard(card,id);
  logoReserve.classList.toggle('hidden',id!==0);
- card.setAttribute('aria-label',id===0?'Portada':`Carta ${id}, ${m.nombre}`);
+ card.setAttribute('aria-label',id===0?'Portada':`Carta ${id}, ${materials[id].nombre}`);
  card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');syncButtons();
 }
 async function loadApp(){
  try{
-  const r=await fetch('materiales.json',{cache:'no-cache'});
+  const r=await fetch('materiales.json?v=2',{cache:'no-cache'});
   if(!r.ok)throw new Error('materiales.json');materials=await r.json();
-  for(let id=1;id<=TOTAL;id++)if(!materials[id]?.nombre||!materials[id]?.descripcion)throw new Error(`ficha ${id} incompleta`);
+  for(let id=1;id<=TOTAL;id++){
+   const m=materials[id];
+   if(!m?.nombre||!m.descripcion||![1,2,3].includes(m.nivel)||!Array.isArray(m.categorias)||!m.categorias.length||m.categorias.some(c=>!Object.hasOwn(CATEGORIES,c)))throw new Error(`ficha ${id} incompleta`);
+  }
   // Precarga escalonada: evita solicitar más de seis imágenes a la vez.
   let loaded=0, next=0;
   async function worker(){while(next<=TOTAL){let id=next++;let image=new Image();
@@ -51,13 +60,13 @@ function drawNext(){if(!playing||finished||loading||changing||modalOpen)return;
  if(position===deck.length-1)mainBtn.textContent='TERMINAR';
  requestAnimationFrame(()=>requestAnimationFrame(()=>{changing=false;syncButtons();}));}
 function endGame(){finished=true;playing=false;ready=false;status.innerHTML=`<span class="finished">¡LOTERÍA!</span><br>Se han echado las ${TOTAL} cartas.`;mainBtn.textContent='BARAJAR DE NUEVO';shuffleBtn.classList.add('hidden');syncButtons();}
-function openDescription(){if(currentCard===0||!materials[currentCard]||loading||changing)return;
- descriptionTitle.textContent=materials[currentCard].nombre;descriptionText.textContent=materials[currentCard].descripcion;
- modalOpen=true;modal.classList.remove('hidden');syncButtons();closeBtn.focus();}
-function closeDescription(){modalOpen=false;modal.classList.add('hidden');syncButtons();descriptionBtn.focus();}
+function openDescription(id=currentCard,trigger=document.activeElement){if(id===0||!materials[id]||loading||changing||modalOpen)return;
+ descriptionTitle.textContent=materials[id].nombre;descriptionText.textContent=materials[id].descripcion;
+ descriptionTrigger=trigger;modalOpen=true;modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();closeBtn.focus({preventScroll:true});}
+function closeDescription(){modalOpen=false;modal.classList.add('hidden');$('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;}
 mainBtn.addEventListener('click',()=>{if(finished){shuffleDeck();return;}if(!playing){startGame();return;}drawNext();});
 shuffleBtn.addEventListener('click',()=>{if(!playing||confirm('¿Barajar de nuevo? Se reiniciará la partida actual.'))shuffleDeck();});
-descriptionBtn.addEventListener('click',openDescription);closeBtn.addEventListener('click',closeDescription);
-document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}return;}
- if((e.code==='Space'||e.code==='ArrowRight')&&playing&&!finished){e.preventDefault();if(!e.repeat)drawNext();}});
+descriptionBtn.addEventListener('click',()=>openDescription(currentCard,descriptionBtn));closeBtn.addEventListener('click',closeDescription);
+document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}else if(e.key==='Tab'){e.preventDefault();closeBtn.focus({preventScroll:true});}return;}
+ if(activeMode==='lottery'&&(e.code==='Space'||e.code==='ArrowRight')&&playing&&!finished&&!e.target.closest('input,select,textarea,.mode-nav')){e.preventDefault();if(!e.repeat)drawNext();}});
 loadApp();

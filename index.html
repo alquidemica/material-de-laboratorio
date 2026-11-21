@@ -1,4 +1,64 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Lotería de material del laboratorio</title><link rel="stylesheet" href="estilos.css"></head><body>
-<main class="app"><h1 class="title">Lotería de material del laboratorio</h1><section class="stage" aria-live="off"><div class="card-shell" id="cardShell"><article class="card cover" id="card" aria-label="Portada de la lotería"><div class="card-inner"><div id="cardNumber" class="card-number">0</div><img id="cardArt" class="card-art" src="cartas/0.webp" alt="Ilustración del laboratorio"><div id="logoReserve" class="cover-logo-reserve"><span>ESPACIO PARA LOGOTIPO</span></div><div id="cardName" class="card-name">LOTERÍA DE MATERIAL DEL LABORATORIO</div></div></article></div></section>
-<div id="status" class="status">Preparando cartas…</div><div class="controls"><button id="mainBtn" disabled>PREPARANDO CARTAS…</button><button id="descriptionBtn" class="description-btn" disabled>DESCRIPCIÓN</button><button id="shuffleBtn" class="secondary hidden">↻ BARAJAR</button></div><div class="hint">Durante la partida también puedes usar Espacio o →</div></main>
-<div id="descriptionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="descriptionTitle"><div class="modal-box"><h2 id="descriptionTitle"></h2><p id="descriptionText"></p><button id="closeDescriptionBtn">ENTENDIDO</button></div></div><script src="aplicacion.js" defer></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Material de laboratorio</title>
+  <link rel="stylesheet" href="estilos.css?v=2">
+  <script src="aplicacion.js?v=2" defer></script>
+  <script src="estudio.js?v=2" defer></script>
+</head>
+<body>
+<main class="app" id="app">
+  <h1 class="title" id="pageTitle">Lotería de material del laboratorio</h1>
+  <nav class="mode-nav" aria-label="Modo de aprendizaje">
+    <button id="lotteryMode" aria-pressed="true">LOTERÍA</button>
+    <button id="studyMode" aria-pressed="false" disabled>ESTUDIO LIBRE</button>
+  </nav>
+  <section id="lotteryPanel">
+    <div class="stage">
+      <div class="card-shell" id="cardShell">
+        <article class="card cover" id="card" aria-label="Portada de la lotería">
+          <div class="card-inner">
+            <div id="cardNumber" class="card-number">0</div>
+            <img id="cardArt" class="card-art" src="cartas/0.webp" alt="Ilustración del laboratorio">
+            <div id="logoReserve" class="cover-logo-reserve"><span>ESPACIO PARA LOGOTIPO</span></div>
+            <div id="cardName" class="card-name">LOTERÍA DE MATERIAL DEL LABORATORIO</div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div id="status" class="status">Preparando cartas…</div>
+    <div class="controls">
+      <button id="mainBtn" disabled>PREPARANDO CARTAS…</button>
+      <button id="descriptionBtn" class="description-btn" disabled>DESCRIPCIÓN</button>
+      <button id="shuffleBtn" class="secondary hidden">↻ BARAJAR</button>
+    </div>
+    <div class="hint">Durante la partida también puedes usar Espacio o →</div>
+  </section>
+  <section id="studyPanel" class="hidden" aria-label="Estudio libre">
+    <div class="study-tools">
+      <div class="study-fields">
+        <label>Buscar material<input id="studySearch" type="search" placeholder="Ej. matraz, pipeta…" autocomplete="off"></label>
+        <label>Nivel académico<select id="studyLevel"><option value="1">Secundaria</option><option value="2">Preparatoria</option><option value="3">Universidad</option></select></label>
+      </div>
+      <p class="level-note">Catálogo inicial: todos los materiales están disponibles mientras se define su clasificación académica.</p>
+      <div id="categoryFilters" class="category-filters" role="group" aria-label="Filtrar por función"></div>
+      <p id="studyCount" class="study-count" role="status"></p>
+    </div>
+    <div id="studyGrid" class="study-grid"></div>
+    <p id="emptyStudy" class="study-empty hidden">No se encontraron materiales. Prueba otra búsqueda o categoría.</p>
+  </section>
+</main>
+<div id="descriptionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="descriptionTitle" aria-describedby="descriptionText">
+  <div class="modal-box"><h2 id="descriptionTitle"></h2><p id="descriptionText"></p><button id="closeDescriptionBtn">ENTENDIDO</button></div>
+</div>
+<template id="studyCardTemplate">
+  <button class="study-card-button" type="button">
+    <span class="card-shell"><span class="card"><span class="card-inner">
+      <span class="card-number"></span><img class="card-art" alt=""><span class="card-name"></span>
+    </span></span></span>
+  </button>
+</template>
+</body>
+</html>
