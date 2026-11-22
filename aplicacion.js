@@ -65,7 +65,8 @@ function openDescription(id=currentCard,trigger=document.activeElement){if(id===
  $('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');closeBtn.disabled=false;closeBtn.classList.remove('hidden');
  descriptionTitle.textContent=materials[id].nombre;descriptionText.textContent=materials[id].descripcion;
  descriptionTrigger=trigger;modalOpen=true;modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();closeBtn.focus({preventScroll:true});}
-function closeDescription(){if(!modalOpen||closeBtn.disabled)return;modalOpen=false;modal.classList.add('hidden');$('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;if(activeMode==='random')afterRandomDescription();}
+function closeDescription(){if(!modalOpen||closeBtn.disabled)return;modalOpen=false;modal.classList.add('hidden');modal.classList.remove('cover-dialog');$('startCoverBtn').classList.add('hidden');closeBtn.textContent='ENTENDIDO';
+ $('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;if(activeMode==='random')afterRandomDescription();}
 mainBtn.addEventListener('click',()=>{if(finished){shuffleDeck();return;}if(!playing){startGame();return;}drawNext();});
 shuffleBtn.addEventListener('click',()=>{if(!playing||confirm('¿Barajar de nuevo? Se reiniciará la partida actual.'))shuffleDeck();});
 descriptionBtn.addEventListener('click',()=>openDescription(currentCard,descriptionBtn));closeBtn.addEventListener('click',closeDescription);
