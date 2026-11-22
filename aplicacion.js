@@ -7,9 +7,9 @@ const status=$('status'), mainBtn=$('mainBtn'), shuffleBtn=$('shuffleBtn'), desc
 const modal=$('descriptionModal'), descriptionTitle=$('descriptionTitle'), descriptionText=$('descriptionText'), closeBtn=$('closeDescriptionBtn');
 let materials={}, images=new Map(), deck=[], position=-1, currentCard=0;
 let playing=false, finished=false, ready=false, loading=true, changing=false, modalOpen=false;
-let activeMode='lottery', descriptionTrigger=null;
+let activeMode='lottery', descriptionTrigger=null, randomLocked=false;
 const CATEGORIES = {1:'Medición volumétrica',2:'Sujeción y soporte',3:'Calentamiento',4:'Contención y reacción',5:'Separación y destilación',6:'Medición de propiedades',7:'Manipulación y transferencia',8:'Almacenamiento y cierre',9:'Limpieza'};
-function syncButtons(){mainBtn.disabled=loading||changing||modalOpen;shuffleBtn.disabled=loading||changing||modalOpen;descriptionBtn.disabled=loading||changing||modalOpen||currentCard===0||!materials[currentCard]?.descripcion;$('studyMode').disabled=loading||changing||modalOpen;$('lotteryMode').disabled=changing||modalOpen;}
+function syncButtons(){mainBtn.disabled=loading||changing||modalOpen||randomLocked;shuffleBtn.disabled=loading||changing||modalOpen||randomLocked;descriptionBtn.disabled=loading||changing||modalOpen||randomLocked||currentCard===0||!materials[currentCard]?.descripcion;$('studyMode').disabled=loading||changing||modalOpen||randomLocked;$('lotteryMode').disabled=changing||modalOpen||randomLocked;$('randomMode').disabled=loading||changing||modalOpen;}
 // Una sola plantilla lógica para lotería y estudio libre.
 function populateCard(element,id){
  const m=materials[id]||{}, art=element.querySelector('.card-art'), name=element.querySelector('.card-name');
@@ -48,9 +48,10 @@ async function loadApp(){
   mainBtn.textContent='BARAJAR Y COMENZAR';syncButtons();
  }catch(e){status.textContent=`Error al cargar ${e.message}. Comprueba los archivos y recarga.`;mainBtn.textContent='ERROR DE CARGA';}
 }
-function shuffleDeck(){if(loading||changing||modalOpen)return;
- deck=Array.from({length:TOTAL},(_,i)=>i+1);
- for(let i=deck.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+function shuffled(ids){const result=[...ids];for(let i=result.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
+function eligibleIds(level,category=0){return Object.keys(materials).map(Number).filter(id=>id>0&&materials[id].nivel<=level&&(!category||materials[id].categorias.includes(category))).sort((a,b)=>a-b);}
+function shuffleDeck(){if(loading||changing||modalOpen||randomLocked)return;
+ deck=shuffled(Array.from({length:TOTAL},(_,i)=>i+1));
  position=-1;playing=false;finished=false;ready=true;renderCard(0);
  status.textContent=`Mazo barajado · ${TOTAL} cartas`;mainBtn.textContent='COMENZAR';shuffleBtn.classList.remove('hidden');syncButtons();}
 function startGame(){if(loading||changing||modalOpen)return;if(!ready)shuffleDeck();playing=true;ready=false;finished=false;mainBtn.textContent='ECHAR CARTA';drawNext();}
@@ -61,12 +62,13 @@ function drawNext(){if(!playing||finished||loading||changing||modalOpen)return;
  requestAnimationFrame(()=>requestAnimationFrame(()=>{changing=false;syncButtons();}));}
 function endGame(){finished=true;playing=false;ready=false;status.innerHTML=`<span class="finished">¡LOTERÍA!</span><br>Se han echado las ${TOTAL} cartas.`;mainBtn.textContent='BARAJAR DE NUEVO';shuffleBtn.classList.add('hidden');syncButtons();}
 function openDescription(id=currentCard,trigger=document.activeElement){if(id===0||!materials[id]||loading||changing||modalOpen)return;
+ $('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');closeBtn.disabled=false;closeBtn.classList.remove('hidden');
  descriptionTitle.textContent=materials[id].nombre;descriptionText.textContent=materials[id].descripcion;
  descriptionTrigger=trigger;modalOpen=true;modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();closeBtn.focus({preventScroll:true});}
-function closeDescription(){modalOpen=false;modal.classList.add('hidden');$('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;}
+function closeDescription(){if(!modalOpen||closeBtn.disabled)return;modalOpen=false;modal.classList.add('hidden');$('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;if(activeMode==='random')afterRandomDescription();}
 mainBtn.addEventListener('click',()=>{if(finished){shuffleDeck();return;}if(!playing){startGame();return;}drawNext();});
 shuffleBtn.addEventListener('click',()=>{if(!playing||confirm('¿Barajar de nuevo? Se reiniciará la partida actual.'))shuffleDeck();});
 descriptionBtn.addEventListener('click',()=>openDescription(currentCard,descriptionBtn));closeBtn.addEventListener('click',closeDescription);
-document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}else if(e.key==='Tab'){e.preventDefault();closeBtn.focus({preventScroll:true});}return;}
+document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}else if(e.key==='Tab'){e.preventDefault();const buttons=[...modal.querySelectorAll('button')].filter(b=>!b.disabled&&!b.closest('.hidden'));const i=buttons.indexOf(document.activeElement);buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus({preventScroll:true});}return;}
  if(activeMode==='lottery'&&(e.code==='Space'||e.code==='ArrowRight')&&playing&&!finished&&!e.target.closest('input,select,textarea,.mode-nav')){e.preventDefault();if(!e.repeat)drawNext();}});
 loadApp();

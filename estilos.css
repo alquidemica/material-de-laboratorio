@@ -50,3 +50,18 @@ body.modal-open{overflow:hidden}
 @media(max-width:849px){.study-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}}
 @media(max-width:599px){.study-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.study-tools{padding:10px}.category-filters{gap:6px}.category-filters button{font-size:.8rem;padding:7px 8px}}
 @media(max-height:650px){#lotteryPanel .card-shell{width:min(310px,82vw,calc(45dvh * 2 / 3))}}
+
+/* Estudio aleatorio: utiliza la misma geometría de carta. */
+.random-instruction{color:#fff;font-weight:800;text-shadow:0 2px 4px #000;background:rgba(13,35,64,.93);padding:10px 12px;border-radius:10px;margin:0 0 8px}
+.random-progress{padding:0 8px;color:#fff;font-weight:700;text-shadow:0 2px 4px #000}
+.random-progress progress{width:100%;height:14px;accent-color:#36c88b}
+.random-progress p{margin:4px 0 10px;font-size:.9rem}
+#randomSession .card-shell{width:min(390px,82vw,calc(46dvh * 2 / 3))}
+.random-controls{gap:8px}
+.random-controls button{flex:1 1 130px;max-width:230px;padding:10px 8px}
+.abandon-btn{margin:12px 0 0;background:#fff8e8;font-size:.8rem;padding:7px 10px}
+#randomKnown{background:#69dca6}#randomReview{background:#ffce72}
+#randomFeedback{font-size:.95rem}
+.random-results{text-align:center}.random-score{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;color:#69dca6;margin:12px 0 0}
+.random-results dl{display:grid;grid-template-columns:1fr auto;gap:12px;text-align:left;margin:24px 0}.random-results dd{margin:0;font-weight:800}
+@media(max-width:480px){.random-controls button{flex:1 1 90px;font-size:.75rem}.random-instruction{font-size:.88rem}.mode-nav button{font-size:.78rem;padding:8px}.random-results dl{font-size:.87rem}}
