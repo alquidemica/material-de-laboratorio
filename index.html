@@ -20,7 +20,7 @@
   <section id="lotteryPanel">
     <div class="stage">
       <div class="card-shell" id="cardShell">
-        <article class="card cover" id="card" aria-label="Portada de la lotería">
+        <article class="card cover" id="card" role="button" tabindex="0" aria-label="Portada de la lotería">
           <div class="card-inner">
             <div id="cardNumber" class="card-number">0</div>
             <img id="cardArt" class="card-art" src="cartas/0.webp" alt="Ilustración del laboratorio">
@@ -80,7 +80,7 @@
   </section>
 </main>
 <div id="descriptionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="descriptionTitle" aria-describedby="descriptionText">
-  <div class="modal-box"><h2 id="descriptionTitle"></h2><p id="descriptionText"></p><div id="randomRating" class="controls hidden"><button id="randomKnown">LO SABÍA</button><button id="randomReview">REPASAR MÁS TARDE</button></div><p id="randomFeedback" class="hidden" role="status"></p><button id="closeDescriptionBtn">ENTENDIDO</button></div>
+  <div class="modal-box"><h2 id="descriptionTitle"></h2><p id="descriptionText"></p><div id="randomRating" class="controls hidden"><button id="randomKnown">LO SABÍA</button><button id="randomReview">REPASAR MÁS TARDE</button></div><p id="randomFeedback" class="hidden" role="status"></p><button id="startCoverBtn" class="hidden">COMENZAR JUEGO</button><button id="closeDescriptionBtn">ENTENDIDO</button></div>
 </div>
 <template id="studyCardTemplate">
   <button class="study-card-button" type="button">
