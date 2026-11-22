@@ -74,3 +74,5 @@ body.modal-open{overflow:hidden}
 .random-card-icon[data-state="unseen"] [data-icon="unseen"],.random-card-icon[data-state="known"] [data-icon="known"],.random-card-icon[data-state="review"] [data-icon="review"]{display:inline}
 .random-card-icon[data-state="known"]{color:#169447}
 .random-card-icon[data-state="review"]{color:#b58300}
+#randomCard{cursor:pointer}
+#randomCard:focus-visible{outline:3px solid #FFD700;outline-offset:3px}
