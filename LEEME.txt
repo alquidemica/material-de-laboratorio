@@ -1,4 +1,4 @@
-MATERIAL DE LABORATORIO · VERSIÓN 2 · ESTUDIO LIBRE
+MATERIAL DE LABORATORIO · VERSIÓN 3 · ESTUDIO ALEATORIO
 
 Publicación: subir al repositorio GitHub Pages el contenido de esta carpeta (no el ZIP tal cual). index.html debe estar en la raíz.
 Abrir desde servidor web o GitHub Pages; materiales.json se obtiene mediante fetch() y algunos navegadores bloquean la lectura al abrir index.html con doble clic (file://).
@@ -8,6 +8,7 @@ materiales.json: nombres, descripciones, colores del marco (marco: #RRGGBB), niv
 estilos.css: geometría de la carta, textos, fondos, botones. Variables principales: .card-shell, .card-inner, .card-art, .card-name, .cover-logo-reserve.
 aplicacion.js: barajar, avance, teclas, diálogo compartido, populateCard(), CATEGORIES y TOTAL.
 estudio.js: filtros, buscador, parrilla y navegación entre modos.
+estudio-aleatorio.js: RandomSession, filtros iniciales, navegación, repaso y puntuación.
 cartas/numero.webp: imágenes. No contienen los marcos, números ni nombres.
 fondo-laboratorio.webp: fondo general de la página.
 
@@ -16,8 +17,9 @@ El modo estudio libre usa una parrilla de 5, 4, 3 o 2 columnas según el ancho d
 Las 42 fichas tienen nivel 1 provisionalmente. Cambiar nivel a 2 o 3 cuando se apruebe la clasificación académica. El acceso por nivel es un filtro pedagógico, no una protección comercial. La lotería conserva el mazo completo por ahora.
 Categorías: 1 Medición volumétrica; 2 Sujeción y soporte; 3 Calentamiento; 4 Contención y reacción; 5 Separación y destilación; 6 Medición de propiedades; 7 Manipulación y transferencia; 8 Almacenamiento y cierre; 9 Limpieza. Todos = 0 (no se asigna a las fichas).
 La parrilla no incluye la portada. Cerrar una descripción conserva filtros y posición. Alternar el modo conserva el mazo actual.
-Los minijuegos y el modo de estudio aleatorio específico quedan pendientes.
+Estudio aleatorio: selecciona nivel y categoría, comienza la sesión y navega hacia delante o atrás. Al revelar, marca Lo sabía o Repasar más tarde. Entendido cierra la descripción. Una carta conocida queda evaluada; una carta enviada a repaso se mueve al final sin duplicarse y puede evaluarse de nuevo. Al llegar al final, Siguiente lleva a los pendientes. La sesión termina al dominar todos los materiales. La puntuación principal es el porcentaje de aciertos al primer intento; se cuentan también los intentos y materiales que necesitaron repaso. Los otros modos se bloquean durante la sesión y se desbloquean al terminar o abandonar. La lotería y estudio libre conservan su estado. La puntuación es una autoevaluación, no una calificación verificada.
+Los minijuegos quedan pendientes.
 
-ACTUALIZACIÓN DESDE V1: sustituir index.html, estilos.css, aplicacion.js y materiales.json; añadir estudio.js. Las imágenes no han cambiado. Se recomienda actualizar LEEME.txt también. Hacer un solo commit con todos los cambios y recargar la página después del despliegue.
+ACTUALIZACIÓN DESDE V2: sustituir index.html, estilos.css, aplicacion.js y estudio.js; añadir estudio-aleatorio.js. No cambian las imágenes ni materiales.json. Actualizar LEEME.txt. Hacer un solo commit en beta y recargar la página después del despliegue.
 Las fichas de 38-42 se redactaron para esta versión: verificar contenido editorial antes de publicar.
 La portada mantiene una reserva visual para el futuro logotipo, sin marca aún.

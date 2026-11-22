@@ -6,10 +6,7 @@ const normalizeSearch = value => value.normalize('NFD').replace(/[\u0300-\u036f]
 
 function getStudyIds(){
  const query=normalizeSearch(studySearch.value), level=Number(studyLevel.value);
- return Object.keys(materials).map(Number).filter(id=>id>0).sort((a,b)=>a-b).filter(id=>{
-  const m=materials[id];
-  return m.nivel<=level && (!selectedCategory||m.categorias.includes(selectedCategory)) && normalizeSearch(m.nombre).includes(query);
- });
+ return eligibleIds(level,selectedCategory).filter(id=>normalizeSearch(materials[id].nombre).includes(query));
 }
 function renderStudyGrid(){
  const ids=getStudyIds(), fragment=document.createDocumentFragment();
@@ -35,18 +32,21 @@ function initStudy(){
  studyInitialized=true;renderStudyGrid();
 }
 function switchMode(mode){
- if(loading||changing||modalOpen||mode===activeMode)return;
+ if(loading||changing||modalOpen||mode===activeMode||randomLocked)return;
  if(activeMode==='study')studyScroll=window.scrollY;
  activeMode=mode;
  const studying=mode==='study';
- $('lotteryPanel').classList.toggle('hidden',studying);
+ $('lotteryPanel').classList.toggle('hidden',mode!=='lottery');
  $('studyPanel').classList.toggle('hidden',!studying);
+ $('randomPanel').classList.toggle('hidden',mode!=='random');
  $('app').classList.toggle('study-active',studying);
  document.body.classList.toggle('study-active',studying);
- $('pageTitle').textContent=studying?'Estudio libre · Material de laboratorio':'Lotería de material del laboratorio';
- $('lotteryMode').setAttribute('aria-pressed',String(!studying));
+ $('pageTitle').textContent=studying?'Estudio libre · Material de laboratorio':mode==='random'?'Estudio aleatorio':'Lotería de material del laboratorio';
+ $('lotteryMode').setAttribute('aria-pressed',String(mode==='lottery'));
  $('studyMode').setAttribute('aria-pressed',String(studying));
+ $('randomMode').setAttribute('aria-pressed',String(mode==='random'));
  if(studying)initStudy();
+ if(mode==='random')initRandom();
  window.scrollTo(0,studying?studyScroll:0);
 }
 $('lotteryMode').addEventListener('click',()=>switchMode('lottery'));
