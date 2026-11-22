@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Material de laboratorio</title>
-  <link rel="stylesheet" href="estilos.css?v=3.1">
+  <link rel="stylesheet" href="estilos.css?v=3.1.1">
   <script src="aplicacion.js?v=3" defer></script>
   <script src="estudio.js?v=3.1" defer></script>
-  <script src="estudio-aleatorio.js?v=3" defer></script>
+  <script src="estudio-aleatorio.js?v=3.1.1" defer></script>
 </head>
 <body>
 <main class="app" id="app">
@@ -65,7 +65,7 @@
     <div id="randomSession" class="hidden">
       <p class="random-instruction">Trata de decir la función del material antes de revelar su descripción.</p>
       <div class="random-progress"><progress id="randomProgress" value="0" max="42" aria-label="Materiales dominados"></progress><p id="randomStatus" role="status"></p></div>
-      <div class="stage"><div class="card-shell"><article class="card" id="randomCard"><div class="card-inner"><div class="card-number"></div><img class="card-art" alt=""><div class="card-name"></div></div></article></div></div>
+      <div class="stage"><div class="card-shell"><article class="card" id="randomCard"><div class="card-inner"><div class="card-number"></div><span id="randomCardIcon" class="random-card-icon" data-state="unseen" role="img" aria-label="Por evaluar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g data-icon="unseen"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></g><g data-icon="known"><path d="m4 12 5 5L20 6"/></g><g data-icon="review"><path d="M5 3h14M5 21h14M7 3v4c0 2 2 4 5 5-3 1-5 3-5 5v4m10-18v4c0 2-2 4-5 5 3 1 5 3 5 5v4"/></g></svg></span><img class="card-art" alt=""><div class="card-name"></div></div></article></div></div>
       <p id="randomCardStatus" class="status" role="status"></p>
       <div class="controls random-controls"><button id="randomPrev" class="secondary">← CARTA ANTERIOR</button><button id="randomReveal" class="description-btn">VER DESCRIPCIÓN</button><button id="randomNext" class="secondary">SIGUIENTE CARTA →</button></div>
       <button id="randomAbandon" class="abandon-btn">Abandonar sesión</button>
