@@ -41,7 +41,7 @@ function switchMode(mode){
  $('randomPanel').classList.toggle('hidden',mode!=='random');
  $('app').classList.toggle('study-active',studying);
  document.body.classList.toggle('study-active',studying);
- $('pageTitle').textContent=studying?'Estudio libre · Material de laboratorio':mode==='random'?'Estudio aleatorio':'Lotería de material del laboratorio';
+ $('pageTitle').textContent=studying?'Estudio libre':mode==='random'?'Estudio aleatorio':'Lotería';
  $('lotteryMode').setAttribute('aria-pressed',String(mode==='lottery'));
  $('studyMode').setAttribute('aria-pressed',String(studying));
  $('randomMode').setAttribute('aria-pressed',String(mode==='random'));
