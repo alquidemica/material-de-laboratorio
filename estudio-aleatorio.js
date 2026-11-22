@@ -39,3 +39,5 @@ randomLevel.addEventListener('change',updateRandomSetup);randomCategory.addEvent
 $('randomStart').addEventListener('click',startRandom);$('randomPrev').addEventListener('click',()=>navigateRandom(-1));$('randomNext').addEventListener('click',()=>navigateRandom(1));$('randomReveal').addEventListener('click',revealRandom);
 $('randomKnown').addEventListener('click',()=>rateRandom(true));$('randomReview').addEventListener('click',()=>rateRandom(false));$('randomAgain').addEventListener('click',resetRandom);
 $('randomAbandon').addEventListener('click',()=>{if(randomLocked&&!modalOpen&&confirm('¿Abandonar la sesión? No se guardará la puntuación.'))resetRandom();});
+$('randomCard').addEventListener('click',revealRandom);
+$('randomCard').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();revealRandom();}});
