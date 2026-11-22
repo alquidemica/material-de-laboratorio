@@ -15,7 +15,7 @@ function populateCard(element,id){
  const m=materials[id]||{}, art=element.querySelector('.card-art'), name=element.querySelector('.card-name');
  element.classList.toggle('cover',id===0);
  element.style.setProperty('--outer',id===0?'#a65add':m.marco||'#54cdbc');
- art.src=images.get(id)?.src||`cartas/${id}.webp`;
+ art.src=images.get(id)?.src||`cartas/${id}.webp?v=2`;
  art.alt=id===0?'Ilustración de portada del laboratorio':m.nombre||`Material ${id}`;
  element.querySelector('.card-number').textContent=id;
  name.textContent=id===0?'LOTERÍA DE MATERIAL DEL LABORATORIO':m.nombre||`Material ${id}`;
@@ -40,7 +40,7 @@ async function loadApp(){
   // Precarga escalonada: evita solicitar más de seis imágenes a la vez.
   let loaded=0, next=0;
   async function worker(){while(next<=TOTAL){let id=next++;let image=new Image();
-    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error(`cartas/${id}.webp`));image.src=`cartas/${id}.webp`;if(image.complete)image.naturalWidth?resolve():reject(new Error(`cartas/${id}.webp`));});
+    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error(`cartas/${id}.webp`));image.src=`cartas/${id}.webp?v=2`;if(image.complete)image.naturalWidth?resolve():reject(new Error(`cartas/${id}.webp`));});
     images.set(id,image);loaded++;status.textContent=`Preparando cartas: ${loaded} de ${TOTAL+1}…`;
    }}
   await Promise.all(Array.from({length:6},worker));
