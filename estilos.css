@@ -65,3 +65,5 @@ body.modal-open{overflow:hidden}
 .random-results{text-align:center}.random-score{font-size:clamp(2.5rem,9vw,4.5rem);font-weight:900;color:#69dca6;margin:12px 0 0}
 .random-results dl{display:grid;grid-template-columns:1fr auto;gap:12px;text-align:left;margin:24px 0}.random-results dd{margin:0;font-weight:800}
 @media(max-width:480px){.random-controls button{flex:1 1 90px;font-size:.75rem}.random-instruction{font-size:1rem}.mode-nav button{font-size:.78rem;padding:8px}.random-results dl{font-size:.87rem}}
+#randomCard{cursor:pointer}
+#randomCard:focus-visible{outline:3px solid #FFD700;outline-offset:3px}
