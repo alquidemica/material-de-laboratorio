@@ -71,4 +71,12 @@ shuffleBtn.addEventListener('click',()=>{if(!playing||confirm('¿Barajar de nuev
 descriptionBtn.addEventListener('click',()=>openDescription(currentCard,descriptionBtn));closeBtn.addEventListener('click',closeDescription);
 document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}else if(e.key==='Tab'){e.preventDefault();const buttons=[...modal.querySelectorAll('button')].filter(b=>!b.disabled&&!b.closest('.hidden'));const i=buttons.indexOf(document.activeElement);buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus({preventScroll:true});}return;}
  if(activeMode==='lottery'&&(e.code==='Space'||e.code==='ArrowRight')&&playing&&!finished&&!e.target.closest('input,select,textarea,.mode-nav')){e.preventDefault();if(!e.repeat)drawNext();}});
+function revealLotteryCard(){if(activeMode!=='lottery'||loading||changing||modalOpen)return;if(currentCard!==0){openDescription(currentCard,card);return;}
+ $('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');
+ descriptionTitle.textContent='¿Comenzamos la lotería?';descriptionText.textContent='';
+ $('startCoverBtn').classList.remove('hidden');closeBtn.textContent='CANCELAR';closeBtn.disabled=false;closeBtn.classList.remove('hidden');
+ descriptionTrigger=card;modalOpen=true;modal.classList.add('cover-dialog');modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();$('startCoverBtn').focus();}
+card.addEventListener('click',revealLotteryCard);card.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();revealLotteryCard();}});
+$('startCoverBtn').addEventListener('click',()=>{if(!modalOpen||!modal.classList.contains('cover-dialog'))return;closeDescription();startGame();});
 loadApp();
