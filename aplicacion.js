@@ -7,15 +7,15 @@ const status=$('status'), mainBtn=$('mainBtn'), shuffleBtn=$('shuffleBtn'), desc
 const modal=$('descriptionModal'), descriptionTitle=$('descriptionTitle'), descriptionText=$('descriptionText'), closeBtn=$('closeDescriptionBtn');
 let materials={}, images=new Map(), deck=[], position=-1, currentCard=0;
 let playing=false, finished=false, ready=false, loading=true, changing=false, modalOpen=false;
-let activeMode='lottery', descriptionTrigger=null, randomLocked=false;
+let activeMode='lottery', descriptionTrigger=null, randomLocked=false, memoryLocked=false;
 const CATEGORIES = {1:'Medición volumétrica',2:'Sujeción y soporte',3:'Calentamiento',4:'Contención y reacción',5:'Separación y destilación',6:'Medición de propiedades',7:'Manipulación y transferencia',8:'Almacenamiento y cierre',9:'Limpieza'};
-function syncButtons(){mainBtn.disabled=loading||changing||modalOpen||randomLocked;shuffleBtn.disabled=loading||changing||modalOpen||randomLocked;descriptionBtn.disabled=loading||changing||modalOpen||randomLocked||currentCard===0||!materials[currentCard]?.descripcion;$('studyMode').disabled=loading||changing||modalOpen||randomLocked;$('lotteryMode').disabled=changing||modalOpen||randomLocked;$('randomMode').disabled=loading||changing||modalOpen;}
+function syncButtons(){const busy=loading||changing||modalOpen||randomLocked||memoryLocked;mainBtn.disabled=busy;shuffleBtn.disabled=busy;descriptionBtn.disabled=busy||currentCard===0||!materials[currentCard]?.descripcion;$('studyMode').disabled=busy;$('lotteryMode').disabled=changing||modalOpen||randomLocked||memoryLocked;$('randomMode').disabled=busy;$('memoryMode').disabled=busy;}
 // Una sola plantilla lógica para lotería y estudio libre.
 function populateCard(element,id){
  const m=materials[id]||{}, art=element.querySelector('.card-art'), name=element.querySelector('.card-name');
  element.classList.toggle('cover',id===0);
  element.style.setProperty('--outer',id===0?'#a65add':m.marco||'#54cdbc');
- art.src=images.get(id)?.src||`cartas/${id}.webp?v=2`;
+ art.src=images.get(id)?.src||`cartas/${id}.webp?v=4`;
  art.alt=id===0?'Ilustración de portada del laboratorio':m.nombre||`Material ${id}`;
  element.querySelector('.card-number').textContent=id;
  name.textContent=id===0?'LOTERÍA DE MATERIAL DEL LABORATORIO':m.nombre||`Material ${id}`;
@@ -40,7 +40,7 @@ async function loadApp(){
   // Precarga escalonada: evita solicitar más de seis imágenes a la vez.
   let loaded=0, next=0;
   async function worker(){while(next<=TOTAL){let id=next++;let image=new Image();
-    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error(`cartas/${id}.webp`));image.src=`cartas/${id}.webp?v=2`;if(image.complete)image.naturalWidth?resolve():reject(new Error(`cartas/${id}.webp`));});
+    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error(`cartas/${id}.webp?v=4`));image.src=`cartas/${id}.webp?v=4`;if(image.complete)image.naturalWidth?resolve():reject(new Error(`cartas/${id}.webp?v=4`));});
     images.set(id,image);loaded++;status.textContent=`Preparando cartas: ${loaded} de ${TOTAL+1}…`;
    }}
   await Promise.all(Array.from({length:6},worker));
@@ -65,19 +65,25 @@ function openDescription(id=currentCard,trigger=document.activeElement){if(id===
  $('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');closeBtn.disabled=false;closeBtn.classList.remove('hidden');
  descriptionTitle.textContent=materials[id].nombre;descriptionText.textContent=materials[id].descripcion;
  descriptionTrigger=trigger;modalOpen=true;modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();closeBtn.focus({preventScroll:true});}
-function closeDescription(){if(!modalOpen||closeBtn.disabled)return;modalOpen=false;modal.classList.add('hidden');modal.classList.remove('cover-dialog');$('startCoverBtn').classList.add('hidden');closeBtn.textContent='ENTENDIDO';
- $('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;if(activeMode==='random')afterRandomDescription();}
+function closeDescription(){if(!modalOpen||closeBtn.disabled)return;modalOpen=false;modal.classList.add('hidden');modal.classList.remove('cover-dialog');$('startCoverBtn').classList.add('hidden');closeBtn.textContent='ENTENDIDO';$('app').inert=false;document.body.classList.remove('modal-open');syncButtons();descriptionTrigger?.focus({preventScroll:true});descriptionTrigger=null;if(activeMode==='random')afterRandomDescription();if(activeMode==='memory')afterMemoryDescription();}
 mainBtn.addEventListener('click',()=>{if(finished){shuffleDeck();return;}if(!playing){startGame();return;}drawNext();});
 shuffleBtn.addEventListener('click',()=>{if(!playing||confirm('¿Barajar de nuevo? Se reiniciará la partida actual.'))shuffleDeck();});
 descriptionBtn.addEventListener('click',()=>openDescription(currentCard,descriptionBtn));closeBtn.addEventListener('click',closeDescription);
 document.addEventListener('keydown',e=>{if(modalOpen){if(e.code==='Escape'){e.preventDefault();closeDescription();}else if(e.key==='Tab'){e.preventDefault();const buttons=[...modal.querySelectorAll('button')].filter(b=>!b.disabled&&!b.closest('.hidden'));const i=buttons.indexOf(document.activeElement);buttons[(i+(e.shiftKey?-1:1)+buttons.length)%buttons.length]?.focus({preventScroll:true});}return;}
  if(activeMode==='lottery'&&(e.code==='Space'||e.code==='ArrowRight')&&playing&&!finished&&!e.target.closest('input,select,textarea,.mode-nav')){e.preventDefault();if(!e.repeat)drawNext();}});
-function revealLotteryCard(){if(activeMode!=='lottery'||loading||changing||modalOpen)return;if(currentCard!==0){openDescription(currentCard,card);return;}
+
+// Las cartas de lotería son activables al toque y mediante teclado.
+function revealLotteryCard(){
+ if(activeMode!=='lottery'||loading||changing||modalOpen||memoryLocked||randomLocked)return;
+ if(currentCard!==0){openDescription(currentCard,card);return;}
  $('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');
  descriptionTitle.textContent='¿Comenzamos la lotería?';descriptionText.textContent='';
- $('startCoverBtn').classList.remove('hidden');closeBtn.textContent='CANCELAR';closeBtn.disabled=false;closeBtn.classList.remove('hidden');
- descriptionTrigger=card;modalOpen=true;modal.classList.add('cover-dialog');modal.classList.remove('hidden');$('app').inert=true;document.body.classList.add('modal-open');syncButtons();$('startCoverBtn').focus();}
-card.addEventListener('click',revealLotteryCard);card.addEventListener('keydown',e=>{
-  if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();revealLotteryCard();}});
+ $('startCoverBtn').classList.remove('hidden');closeBtn.textContent='CANCELAR';closeBtn.disabled=false;
+ descriptionTrigger=card;modalOpen=true;modal.classList.add('cover-dialog');modal.classList.remove('hidden');
+ $('app').inert=true;document.body.classList.add('modal-open');syncButtons();$('startCoverBtn').focus({preventScroll:true});
+}
+card.addEventListener('click',revealLotteryCard);
+card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();revealLotteryCard();}});
 $('startCoverBtn').addEventListener('click',()=>{if(!modalOpen||!modal.classList.contains('cover-dialog'))return;closeDescription();startGame();});
+
 loadApp();
