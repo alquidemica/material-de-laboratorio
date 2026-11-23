@@ -5,6 +5,7 @@ let memoryRound=0;
 let memoryTimeout=null;
 let memoryTick=null;
 let memoryPendingDescription=false;
+let memoryResizeFrame=null;
 
 function memoryView(view){
  for(const id of ['memorySetup','memorySession','memoryResults'])$(id).classList.toggle('hidden',id!==view);
@@ -35,10 +36,39 @@ function updateMemoryStats(){
  $('memoryErrorsStatus').textContent=`Errores: ${g.errors}`;
  $('memoryTimeStatus').textContent=`Tiempo: ${formatMemoryTime(memoryDuration(g))}`;
 }
+/* Mantiene el tablero completo en pantalla cuando hay espacio suficiente.
+   No altera ni reordena las posiciones de las cartas. */
+function fitMemoryBoard(){
+ const g=memoryGame, grid=$('memoryGrid');
+ if(!g||!memoryLocked||!grid||$('memorySession').classList.contains('hidden'))return;
+ const viewportWidth=document.documentElement.clientWidth;
+ const columns=viewportWidth<=599?({4:2,6:3,9:4,12:5}[g.pairs]):viewportWidth<=849?4:({4:4,6:6,9:6,12:6}[g.pairs]);
+ const rows=Math.ceil(g.cards.length/columns);
+ const gap=viewportWidth<=599?4:viewportWidth<=849?7:9;
+ const availableWidth=grid.parentElement.clientWidth;
+ // Reserva espacio inferior para la respiración visual y el navegador móvil.
+ const availableHeight=Math.max(0,window.innerHeight-grid.getBoundingClientRect().top-14);
+ const byWidth=(availableWidth-gap*(columns-1))/columns;
+ const byHeight=(availableHeight-gap*(rows-1))/rows*2/3;
+ // 48 px es la referencia mínima para una zona táctil cómoda.
+ const size=Math.max(48,Math.min(byWidth,byHeight,viewportWidth<=599?120:165));
+ grid.style.setProperty('--memory-cols',columns);
+ grid.style.setProperty('--memory-gap',`${gap}px`);
+ grid.style.setProperty('--memory-card-width',`${Math.floor(size*10)/10}px`);
+ grid.setAttribute('aria-label',`Tablero de memorama, ${columns} columnas y ${rows} filas`);
+}
+function scheduleMemoryFit(){
+ if(memoryResizeFrame!==null)cancelAnimationFrame(memoryResizeFrame);
+ memoryResizeFrame=requestAnimationFrame(()=>{memoryResizeFrame=null;fitMemoryBoard();});
+}
+function setMemoryCompact(enabled){
+ $('app').classList.toggle('memory-playing',enabled);
+ document.body.classList.toggle('memory-playing',enabled);
+}
 function startMemory(){
  if(activeMode!=='memory'||loading||modalOpen||memoryLocked)return;
  const pairs=Number(document.querySelector('input[name="memoryPairs"]:checked')?.value||6);
- if(![4,6,12].includes(pairs))return;
+ if(![4,6,9,12].includes(pairs))return;
  const candidates=Object.keys(materials).map(Number).filter(id=>id>0&&materials[id]?.nombre);
  if(candidates.length<pairs){alert('No hay suficientes materiales para iniciar.');return;}
  const ids=shuffled(candidates).slice(0,pairs);
@@ -60,7 +90,8 @@ function startMemory(){
  });
  $('memoryGrid').replaceChildren(fragment);
  $('memoryTimeStatus').classList.toggle('hidden',!$('memoryShowClock').checked);
- memoryView('memorySession');syncButtons();updateMemoryStats();
+ memoryView('memorySession');setMemoryCompact(true);syncButtons();updateMemoryStats();
+ scheduleMemoryFit();
  memoryStartClock();
  clearInterval(memoryTick);memoryTick=setInterval(updateMemoryStats,250);
  $('memoryGrid').querySelector('button')?.focus({preventScroll:true});
@@ -121,7 +152,7 @@ function finishMemory(){
  const g=memoryGame;if(!g||g.done)return;
  memoryStopClock();g.done=true;memoryLocked=false;
  clearInterval(memoryTick);memoryTick=null;
- memoryView('memoryResults');syncButtons();
+ setMemoryCompact(false);memoryView('memoryResults');syncButtons();
  $('memoryResultsSummary').textContent=`¡Encontraste las ${g.pairs} parejas!`;
  const stats=$('memoryResultsStats');stats.replaceChildren();
  const attempts=g.matches+g.errors;
@@ -134,7 +165,7 @@ function finishMemory(){
 function resetMemory(){
  clearTimeout(memoryTimeout);clearInterval(memoryTick);memoryTimeout=null;memoryTick=null;
  memoryStopClock();memoryRound++;memoryGame=null;memoryPendingDescription=false;memoryLocked=false;
- memoryView('memorySetup');syncButtons();initMemory();$('memoryStart').focus({preventScroll:true});
+ setMemoryCompact(false);memoryView('memorySetup');syncButtons();initMemory();$('memoryStart').focus({preventScroll:true});
 }
 $('memoryMode').addEventListener('click',()=>switchMode('memory'));
 $('memoryStart').addEventListener('click',startMemory);
@@ -150,3 +181,5 @@ document.addEventListener('visibilitychange',()=>{
  if(!memoryGame||memoryGame.done)return;
  if(document.hidden)memoryStopClock();else memoryStartClock();
 });
+
+window.addEventListener('resize',scheduleMemoryFit,{passive:true});
