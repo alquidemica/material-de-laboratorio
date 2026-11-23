@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Material de laboratorio</title>
-  <link rel="stylesheet" href="estilos.css?v=4.0">
+  <link rel="stylesheet" href="estilos.css?v=4.1">
   <script src="aplicacion.js?v=4.0" defer></script>
   <script src="estudio.js?v=4.0" defer></script>
   <script src="estudio-aleatorio.js?v=4.0" defer></script>
-  <script src="memoria.js?v=4.0" defer></script>
+  <script src="memoria.js?v=4.1" defer></script>
 </head>
 <body>
 <main class="app" id="app">
@@ -85,22 +85,22 @@
       <h2>Prepara tu partida</h2>
       <p class="level-note">Busca parejas del mismo material. Las cartas se eligen al azar entre los 42 instrumentos del catálogo.</p>
       <fieldset class="memory-levels"><legend>Dificultad</legend>
-        <label><input type="radio" name="memoryPairs" value="4"> Fácil · 4 parejas</label>
+        <label><input type="radio" name="memoryPairs" value="4"> Muy fácil · 4 parejas</label>
         <label><input type="radio" name="memoryPairs" value="6" checked> Normal · 6 parejas</label>
-        <label><input type="radio" name="memoryPairs" value="12"> Difícil · 12 parejas</label>
+        <label><input type="radio" name="memoryPairs" value="9"> Difícil · 9 parejas</label>
+        <label><input type="radio" name="memoryPairs" value="12"> Muy difícil · 12 parejas</label>
       </fieldset>
       <label class="memory-clock-option"><input id="memoryShowClock" type="checkbox" checked> Mostrar cronómetro durante la partida</label>
       <button id="memoryStart">COMENZAR MEMORIA</button>
     </div>
     <div id="memorySession" class="hidden">
-      <p class="memory-instruction">Encuentra las parejas de materiales iguales. Al acertar, lee su descripción.</p>
       <div class="memory-stats" aria-live="polite">
         <span id="memoryPairsStatus">Parejas: 0 de 6</span>
         <span id="memoryErrorsStatus">Errores: 0</span>
         <span id="memoryTimeStatus">Tiempo: 00:00</span>
+        <button id="memoryAbandon" class="abandon-btn">Abandonar partida</button>
       </div>
       <div id="memoryGrid" class="memory-grid" aria-label="Tablero de memorama"></div>
-      <button id="memoryAbandon" class="abandon-btn">Abandonar partida</button>
     </div>
     <div id="memoryResults" class="study-tools memory-results hidden" tabindex="-1">
       <h2>¡MEMORIA COMPLETADA!</h2>

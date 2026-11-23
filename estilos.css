@@ -114,3 +114,25 @@ body.modal-open{overflow:hidden}
 .memory-results dd{margin:0;font-weight:900}
 @media(max-width:849px){.memory-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}}
 @media(max-width:599px){.memory-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.memory-tile{border-radius:7px}.memory-front-inner{border-radius:6px}.memory-front-number{font-size:.67rem}.memory-front-name{font-size:clamp(.41rem,1.75vw,.68rem)}.memory-back::after{font-size:.42rem}.memory-stats{font-size:.79rem}.memory-instruction{font-size:1rem}.memory-levels label{flex:1 1 130px;justify-content:center;font-size:.8rem}}
+
+/* v4.1 beta — Memorama sin desplazamiento innecesario. Durante la
+   partida la navegación y el título desaparecen; el tablero aprovecha
+   el espacio sobrante y JS calcula su tamaño según columnas y filas. */
+.app.memory-playing{width:min(100%,1240px);padding:0;margin:0 auto}
+.app.memory-playing>.title,.app.memory-playing>.mode-nav{display:none}
+body.memory-playing{padding:6px 8px;display:block}
+.memory-playing #memoryPanel{padding:0;margin:0}
+.memory-playing .memory-stats{margin:0 auto 6px;max-width:1040px;padding:5px 8px;min-height:38px;gap:6px;font-size:clamp(.75rem,2.5vw,.95rem)}
+.memory-playing .memory-stats .abandon-btn{margin:0;padding:5px 7px;font-size:.73rem;border-width:2px;border-radius:8px;box-shadow:1px 2px 0 #111}
+.memory-playing .memory-grid{grid-template-columns:repeat(var(--memory-cols,6),var(--memory-card-width,100px));gap:var(--memory-gap,9px);width:max-content;max-width:100%;justify-content:center;margin:0 auto}
+.memory-playing .memory-tile{width:var(--memory-card-width,100px);min-width:0;box-shadow:1px 2px 0 #101010;border-width:1px;border-radius:5px}
+.memory-playing .memory-back::after{font-size:clamp(.34rem,1vw,.65rem);letter-spacing:0}
+.memory-playing .memory-front-inner{padding:3% 2%}
+.memory-playing .memory-front-number{font-size:clamp(.56rem,1vw,.95rem)}
+.memory-playing .memory-front-name{font-size:clamp(.36rem,.8vw,.7rem)}
+@media(max-width:599px){
+ .memory-playing .memory-stats{font-size:.7rem;flex-wrap:nowrap;gap:4px;justify-content:space-between}
+ .memory-playing .memory-stats .abandon-btn{font-size:.61rem;padding:5px 4px}
+ .memory-playing .memory-front-name{font-size:clamp(.31rem,1.5vw,.59rem);line-height:1.02}
+ .memory-playing .memory-front-img{height:65%}
+}
