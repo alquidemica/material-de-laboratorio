@@ -1,0 +1,24 @@
+ALQUIDÉMICA · MEMORAMA BETA v4.2 — PARRILLA ADAPTABLE
+
+Sustituye SOLO estos dos archivos en la raíz del repositorio beta:
+- index.html
+- memoria.js
+
+CAMBIO PRINCIPAL
+- El tablero prueba automáticamente diferentes cantidades de columnas y filas.
+- Escoge la distribución que permite el mayor tamaño de carta dentro del ancho y alto disponibles.
+- Recalcula al girar el celular o cambiar el tamaño de la ventana.
+- La lista original de cartas, el progreso, los aciertos, los errores y el cronómetro no se reinician ni reordenan.
+- No cambia la dificultad, el número de parejas ni el comportamiento de la ficha de descripción.
+- Evita filas finales con menos de la mitad de las columnas ocupadas.
+- Conserva el mínimo táctil de 48px cuando no cabe toda la parrilla; en esos casos puede haber desplazamiento.
+- index.html actualiza la URL a memoria.js?v=4.2 para invalidar caché.
+
+PRUEBAS PROPUESTAS
+1. En celular horizontal, difícil (9 parejas) y muy difícil (12 parejas).
+2. Iniciar en vertical, revelar una pareja, girar a horizontal y verificar que el progreso permanezca.
+3. Girar con una sola carta destapada y verificar que siga siendo la misma.
+4. Verificar el cuadro de descripción, ENTENDIDO y regreso al tablero.
+5. Probar las cuatro dificultades en escritorio.
+
+NOTA: La sintaxis JavaScript y cálculos de distribución están comprobados. La apariencia final debe probarse en el navegador real.
