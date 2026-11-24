@@ -1,0 +1,16 @@
+ALQUIDÉMICA — MEMORAMA v4.3 — CORRECCIÓN DE ROTACIÓN
+
+Solo reemplaza estos archivos en el repositorio beta:
+ - memoria.js
+ - index.html (actualiza la versión del script para renovar la caché)
+
+Cambios:
+ - La altura disponible para la parrilla ya no depende del scroll vertical.
+ - Chrome móvil puede variar la altura visible al ocultar su barra: estos cambios aislados ya no recomputan columnas.
+ - Al girar o cambiar el ancho se recalcula la parrilla y se realiza una segunda medición a los 350 ms.
+ - Se preservan las cartas, las parejas, los errores y el tiempo de juego.
+
+Prueba: difícil y muy difícil, vertical → horizontal → vertical.
+El tablero vertical debería volver directamente a su distribución original y el scroll no debería modificar las columnas.
+
+No se han modificado las reglas de emparejamiento.
