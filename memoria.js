@@ -36,26 +36,46 @@ function updateMemoryStats(){
  $('memoryErrorsStatus').textContent=`Errores: ${g.errors}`;
  $('memoryTimeStatus').textContent=`Tiempo: ${formatMemoryTime(memoryDuration(g))}`;
 }
-/* Mantiene el tablero completo en pantalla cuando hay espacio suficiente.
-   No altera ni reordena las posiciones de las cartas. */
+/* v4.2: Selecciona columnas y filas según el espacio real disponible.
+   La secuencia de cartas y las parejas ya encontradas NO se modifican. */
+function chooseMemoryLayout(cardCount, availableWidth, availableHeight, gap, maxCardWidth=165){
+ let best=null;
+ // Acotamos a 12 columnas: evita filas excesivamente largas en pantallas anchas.
+ for(let cols=2;cols<=Math.min(cardCount,12);cols++){
+  const rows=Math.ceil(cardCount/cols);
+  // Evitamos dejar una última fila con menos de la mitad de sus posiciones.
+  const finalRow=cardCount-(rows-1)*cols;
+  if(rows>1&&finalRow<Math.ceil(cols/2))continue;
+  const widthBySpace=(availableWidth-gap*(cols-1))/cols;
+  const widthByHeight=((availableHeight-gap*(rows-1))/rows)*(2/3);
+  const size=Math.min(widthBySpace,widthByHeight,maxCardWidth);
+  if(!Number.isFinite(size)||size<=0)continue;
+  // Gana la carta más grande. En empates, menos filas y tablero más compacto.
+  if(!best||size>best.size+0.5||
+     (Math.abs(size-best.size)<=0.5&&(rows<best.rows||
+      (rows===best.rows&&cols<best.cols)))){
+   best={cols,rows,size};
+  }
+ }
+ return best||{cols:2,rows:Math.ceil(cardCount/2),size:48};
+}
 function fitMemoryBoard(){
- const g=memoryGame, grid=$('memoryGrid');
+ const g=memoryGame,grid=$('memoryGrid');
  if(!g||!memoryLocked||!grid||$('memorySession').classList.contains('hidden'))return;
  const viewportWidth=document.documentElement.clientWidth;
- const columns=viewportWidth<=599?({4:2,6:3,9:4,12:5}[g.pairs]):viewportWidth<=849?4:({4:4,6:6,9:6,12:6}[g.pairs]);
- const rows=Math.ceil(g.cards.length/columns);
- const gap=viewportWidth<=599?4:viewportWidth<=849?7:9;
- const availableWidth=grid.parentElement.clientWidth;
- // Reserva espacio inferior para la respiración visual y el navegador móvil.
+ const gap=viewportWidth<=599?4:window.innerHeight<=550?5:viewportWidth<=849?7:9;
+ // La parrilla tiene max-width de 1040px en CSS.
+ const availableWidth=Math.min(grid.parentElement.clientWidth,1040);
+ // Medir desde la parte superior real del tablero evita contar la barra del navegador.
  const availableHeight=Math.max(0,window.innerHeight-grid.getBoundingClientRect().top-14);
- const byWidth=(availableWidth-gap*(columns-1))/columns;
- const byHeight=(availableHeight-gap*(rows-1))/rows*2/3;
- // 48 px es la referencia mínima para una zona táctil cómoda.
- const size=Math.max(48,Math.min(byWidth,byHeight,viewportWidth<=599?120:165));
- grid.style.setProperty('--memory-cols',columns);
+ const best=chooseMemoryLayout(g.cards.length,availableWidth,availableHeight,gap,viewportWidth<=599?120:165);
+ // Si la pantalla es demasiado pequeña, priorizar una zona pulsable de 48px;
+ // se permite un leve desplazamiento en vez de hacer cartas ilegibles.
+ const size=Math.max(48,best.size);
+ grid.style.setProperty('--memory-cols',best.cols);
  grid.style.setProperty('--memory-gap',`${gap}px`);
  grid.style.setProperty('--memory-card-width',`${Math.floor(size*10)/10}px`);
- grid.setAttribute('aria-label',`Tablero de memorama, ${columns} columnas y ${rows} filas`);
+ grid.setAttribute('aria-label',`Tablero de memorama, ${best.cols} columnas y ${best.rows} filas`);
 }
 function scheduleMemoryFit(){
  if(memoryResizeFrame!==null)cancelAnimationFrame(memoryResizeFrame);
