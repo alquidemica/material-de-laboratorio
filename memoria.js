@@ -6,6 +6,9 @@ let memoryTimeout=null;
 let memoryTick=null;
 let memoryPendingDescription=false;
 let memoryResizeFrame=null;
+let memoryFitTimer=null;
+let memoryLastWidth=null;
+let memoryLastOrientation=null;
 
 function memoryView(view){
  for(const id of ['memorySetup','memorySession','memoryResults'])$(id).classList.toggle('hidden',id!==view);
@@ -66,8 +69,12 @@ function fitMemoryBoard(){
  const gap=viewportWidth<=599?4:window.innerHeight<=550?5:viewportWidth<=849?7:9;
  // La parrilla tiene max-width de 1040px en CSS.
  const availableWidth=Math.min(grid.parentElement.clientWidth,1040);
- // Medir desde la parte superior real del tablero evita contar la barra del navegador.
- const availableHeight=Math.max(0,window.innerHeight-grid.getBoundingClientRect().top-14);
+ // El desplazamiento NO debe alterar el presupuesto vertical del tablero.
+ // getBoundingClientRect().top cambia al hacer scroll y, tras rotar,
+ // puede ser negativo: en esa situación se escogían 3 columnas en vez de 4.
+ const stats=$('memorySession').querySelector('.memory-stats');
+ const statsHeight=stats?.offsetHeight||0;
+ const availableHeight=Math.max(0,window.innerHeight-statsHeight-24);
  const best=chooseMemoryLayout(g.cards.length,availableWidth,availableHeight,gap,viewportWidth<=599?120:165);
  // Si la pantalla es demasiado pequeña, priorizar una zona pulsable de 48px;
  // se permite un leve desplazamiento en vez de hacer cartas ilegibles.
@@ -80,6 +87,20 @@ function fitMemoryBoard(){
 function scheduleMemoryFit(){
  if(memoryResizeFrame!==null)cancelAnimationFrame(memoryResizeFrame);
  memoryResizeFrame=requestAnimationFrame(()=>{memoryResizeFrame=null;fitMemoryBoard();});
+}
+/* Chrome Android cambia la altura útil al mostrar/ocultar la barra de dirección.
+   Eso puede disparar resize al hacer scroll: no recalculamos la parrilla
+   si únicamente cambia esa altura. Sí lo hacemos al cambiar de orientación
+   o al variar el ancho (incluye redimensionar ventanas de escritorio). */
+function handleMemoryResize(){
+ const width=document.documentElement.clientWidth;
+ const orientation=window.matchMedia('(orientation: landscape)').matches?'landscape':'portrait';
+ if(width===memoryLastWidth&&orientation===memoryLastOrientation)return;
+ memoryLastWidth=width;memoryLastOrientation=orientation;
+ scheduleMemoryFit();
+ clearTimeout(memoryFitTimer);
+ // Segundo cálculo tras la transición de orientación, con el viewport estable.
+ memoryFitTimer=setTimeout(scheduleMemoryFit,350);
 }
 function setMemoryCompact(enabled){
  $('app').classList.toggle('memory-playing',enabled);
@@ -111,6 +132,8 @@ function startMemory(){
  $('memoryGrid').replaceChildren(fragment);
  $('memoryTimeStatus').classList.toggle('hidden',!$('memoryShowClock').checked);
  memoryView('memorySession');setMemoryCompact(true);syncButtons();updateMemoryStats();
+ memoryLastWidth=document.documentElement.clientWidth;
+ memoryLastOrientation=window.matchMedia('(orientation: landscape)').matches?'landscape':'portrait';
  scheduleMemoryFit();
  memoryStartClock();
  clearInterval(memoryTick);memoryTick=setInterval(updateMemoryStats,250);
@@ -183,7 +206,8 @@ function finishMemory(){
  $('memoryResults').focus({preventScroll:true});
 }
 function resetMemory(){
- clearTimeout(memoryTimeout);clearInterval(memoryTick);memoryTimeout=null;memoryTick=null;
+ clearTimeout(memoryTimeout);clearInterval(memoryTick);clearTimeout(memoryFitTimer);
+ memoryTimeout=null;memoryTick=null;memoryFitTimer=null;
  memoryStopClock();memoryRound++;memoryGame=null;memoryPendingDescription=false;memoryLocked=false;
  setMemoryCompact(false);memoryView('memorySetup');syncButtons();initMemory();$('memoryStart').focus({preventScroll:true});
 }
@@ -202,4 +226,5 @@ document.addEventListener('visibilitychange',()=>{
  if(document.hidden)memoryStopClock();else memoryStartClock();
 });
 
-window.addEventListener('resize',scheduleMemoryFit,{passive:true});
+window.addEventListener('resize',handleMemoryResize,{passive:true});
+window.addEventListener('orientationchange',handleMemoryResize,{passive:true});
