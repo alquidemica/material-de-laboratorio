@@ -1,0 +1,18 @@
+ALQUIDÉMICA — PARCHE v4.3.1 · TABLERO VISIBLE
+
+Reemplaza en el repositorio beta únicamente:
+- index.html
+- memoria.js
+
+El resto de archivos permanece igual.
+
+Cambios:
+- Cálculo de altura conservador usando visualViewport y medidas del documento.
+- Margen de seguridad inferior de 24 px CSS adicionales.
+- El algoritmo calcula el tamaño que CABE en ancho y alto; no fuerza un mínimo de tamaño que pueda provocar desbordamiento.
+- Se conserva la lógica de rotación y el progreso de la partida.
+- Referencia de caché memoria.js?v=4.3.1.
+
+Pruebas recomendadas: 9 y 12 parejas en vertical; vertical → horizontal → vertical; distintas barras de navegador, y simulación Firefox 360x640, 393x873, 430x932.
+
+NOTA: validación de sintaxis y casos matemáticos realizada; Chrome/Firefox reales pendientes por restricción del navegador automatizado de este entorno.

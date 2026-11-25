@@ -1,0 +1,235 @@
+"use strict";
+/* Memorama v4.0. Un mismo material aparece exactamente dos veces; sin filtro por categorías. */
+let memoryGame=null;
+let memoryRound=0;
+let memoryTimeout=null;
+let memoryTick=null;
+let memoryPendingDescription=false;
+let memoryResizeFrame=null;
+let memoryFitTimer=null;
+let memoryLastWidth=null;
+let memoryLastOrientation=null;
+
+function memoryView(view){
+ for(const id of ['memorySetup','memorySession','memoryResults'])$(id).classList.toggle('hidden',id!==view);
+}
+function initMemory(){
+ // La configuración permanece intacta al abandonar el modo antes de comenzar.
+ $('memoryStart').disabled=loading||Object.keys(materials).filter(id=>Number(id)>0).length<12;
+}
+function memoryDuration(game){
+ return game.elapsed+(game.runningSince===null?0:performance.now()-game.runningSince);
+}
+function memoryStartClock(){
+ const g=memoryGame;
+ if(!g||g.runningSince!==null||memoryPendingDescription||document.hidden||g.done)return;
+ g.runningSince=performance.now();
+}
+function memoryStopClock(){
+ const g=memoryGame;
+ if(g&&g.runningSince!==null){g.elapsed+=performance.now()-g.runningSince;g.runningSince=null;}
+}
+function formatMemoryTime(ms){
+ const sec=Math.floor(ms/1000);
+ return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+}
+function updateMemoryStats(){
+ const g=memoryGame;if(!g)return;
+ $('memoryPairsStatus').textContent=`Parejas: ${g.matches} de ${g.pairs}`;
+ $('memoryErrorsStatus').textContent=`Errores: ${g.errors}`;
+ $('memoryTimeStatus').textContent=`Tiempo: ${formatMemoryTime(memoryDuration(g))}`;
+}
+/* v4.3.1: El tablero debe CABER en el viewport antes de maximizar
+   la carta. No se usa la posición del tablero respecto al scroll. */
+function chooseMemoryLayout(cardCount, availableWidth, availableHeight, gap, maxCardWidth=165){
+ let best=null;
+ for(let cols=2;cols<=Math.min(cardCount,12);cols++){
+  const rows=Math.ceil(cardCount/cols);
+  const finalRow=cardCount-(rows-1)*cols;
+  if(rows>1&&finalRow<Math.ceil(cols/2))continue;
+  const widthBySpace=(availableWidth-gap*(cols-1))/cols;
+  const widthByHeight=(availableHeight-gap*(rows-1))/rows*2/3;
+  const size=Math.min(widthBySpace,widthByHeight,maxCardWidth);
+  if(!Number.isFinite(size)||size<=0)continue;
+  // Solo comparamos configuraciones que caben por ANCHO y ALTO.
+  const fits=size*cols+gap*(cols-1)<=availableWidth+.1&&
+             size*1.5*rows+gap*(rows-1)<=availableHeight+.1;
+  if(!fits)continue;
+  if(!best||size>best.size+0.5||
+     (Math.abs(size-best.size)<=0.5&&(rows<best.rows||
+      (rows===best.rows&&cols<best.cols)))){
+   best={cols,rows,size};
+  }
+ }
+ return best;
+}
+function fitMemoryBoard(){
+ const g=memoryGame,grid=$('memoryGrid');
+ if(!g||!memoryLocked||!grid||$('memorySession').classList.contains('hidden'))return;
+ const viewportWidth=document.documentElement.clientWidth;
+ const gap=viewportWidth<=599?4:window.innerHeight<=550?5:viewportWidth<=849?7:9;
+ const availableWidth=Math.max(1,Math.min(grid.parentElement.clientWidth,1040));
+ const stats=$('memorySession').querySelector('.memory-stats');
+ // En móviles, innerHeight puede ser mayor que el área verdaderamente visible
+ // por las barras de Chrome. Tomamos la medida más conservadora.
+ const heights=[window.innerHeight,document.documentElement.clientHeight,
+                window.visualViewport?.height].filter(n=>Number.isFinite(n)&&n>0);
+ const viewportHeight=Math.min(...heights);
+ const statsHeight=stats?.getBoundingClientRect().height||0;
+ // body: 6px arriba + 6px abajo; separación de marcador: 6px;
+ // margen de seguridad adicional: 24px (barra inferior y redondeos).
+ const availableHeight=Math.max(1,viewportHeight-statsHeight-42);
+ const best=chooseMemoryLayout(g.cards.length,availableWidth,availableHeight,gap,viewportWidth<=599?120:165);
+ if(!best)return;
+ // Solo aceptamos un mínimo de 44px si aún cabe. Si ninguna distribución
+ // alcanza ese mínimo, dejamos el tamaño real y permitimos interacción.
+ const size=Math.floor(best.size*10)/10;
+ grid.style.setProperty('--memory-cols',best.cols);
+ grid.style.setProperty('--memory-gap',`${gap}px`);
+ grid.style.setProperty('--memory-card-width',`${size}px`);
+ grid.setAttribute('aria-label',`Tablero de memorama, ${best.cols} columnas y ${best.rows} filas`);
+}
+function scheduleMemoryFit(){
+ if(memoryResizeFrame!==null)cancelAnimationFrame(memoryResizeFrame);
+ memoryResizeFrame=requestAnimationFrame(()=>{memoryResizeFrame=null;fitMemoryBoard();});
+}
+/* Chrome Android cambia la altura útil al mostrar/ocultar la barra de dirección.
+   Eso puede disparar resize al hacer scroll: no recalculamos la parrilla
+   si únicamente cambia esa altura. Sí lo hacemos al cambiar de orientación
+   o al variar el ancho (incluye redimensionar ventanas de escritorio). */
+function handleMemoryResize(){
+ const width=document.documentElement.clientWidth;
+ const orientation=window.matchMedia('(orientation: landscape)').matches?'landscape':'portrait';
+ if(width===memoryLastWidth&&orientation===memoryLastOrientation)return;
+ memoryLastWidth=width;memoryLastOrientation=orientation;
+ scheduleMemoryFit();
+ clearTimeout(memoryFitTimer);
+ // Segundo cálculo tras la transición de orientación, con el viewport estable.
+ memoryFitTimer=setTimeout(scheduleMemoryFit,350);
+}
+function setMemoryCompact(enabled){
+ $('app').classList.toggle('memory-playing',enabled);
+ document.body.classList.toggle('memory-playing',enabled);
+}
+function startMemory(){
+ if(activeMode!=='memory'||loading||modalOpen||memoryLocked)return;
+ const pairs=Number(document.querySelector('input[name="memoryPairs"]:checked')?.value||6);
+ if(![4,6,9,12].includes(pairs))return;
+ const candidates=Object.keys(materials).map(Number).filter(id=>id>0&&materials[id]?.nombre);
+ if(candidates.length<pairs){alert('No hay suficientes materiales para iniciar.');return;}
+ const ids=shuffled(candidates).slice(0,pairs);
+ const cards=shuffled(ids.flatMap(id=>[{id,unique:`${id}-a`},{id,unique:`${id}-b`}]));
+ memoryRound++;
+ memoryGame={pairs,cards,matches:0,errors:0,matched:new Set(),open:[],busy:false,elapsed:0,runningSince:null,done:false};
+ memoryPendingDescription=false;memoryLocked=true;
+ const fragment=document.createDocumentFragment();
+ cards.forEach((entry,i)=>{
+  const tile=document.createElement('button');tile.type='button';tile.className='memory-tile';
+  tile.dataset.index=i;tile.dataset.id=entry.id;tile.setAttribute('aria-label',`Carta boca abajo, posición ${i+1}`);
+  const back=document.createElement('span');back.className='memory-back';back.textContent='?';back.setAttribute('aria-hidden','true');
+  const front=document.createElement('span');front.className='memory-front';front.style.setProperty('--outer',materials[entry.id].marco||'#54cdbc');
+  const inner=document.createElement('span');inner.className='memory-front-inner';
+  const num=document.createElement('span');num.className='memory-front-number';num.textContent=entry.id;
+  const art=document.createElement('img');art.className='memory-front-img';art.alt='';art.loading='eager';art.src=images.get(entry.id)?.src||`cartas/${entry.id}.webp?v=4`;
+  const name=document.createElement('span');name.className='memory-front-name';name.textContent=materials[entry.id].nombre;
+  inner.append(num,art,name);front.append(inner);tile.append(back,front);fragment.append(tile);
+ });
+ $('memoryGrid').replaceChildren(fragment);
+ $('memoryTimeStatus').classList.toggle('hidden',!$('memoryShowClock').checked);
+ memoryView('memorySession');setMemoryCompact(true);syncButtons();updateMemoryStats();
+ memoryLastWidth=document.documentElement.clientWidth;
+ memoryLastOrientation=window.matchMedia('(orientation: landscape)').matches?'landscape':'portrait';
+ scheduleMemoryFit();
+ memoryStartClock();
+ clearInterval(memoryTick);memoryTick=setInterval(updateMemoryStats,250);
+ $('memoryGrid').querySelector('button')?.focus({preventScroll:true});
+}
+function memoryTile(index){return $('memoryGrid').querySelector(`[data-index="${index}"]`);}
+function flipMemory(index,flipped){
+ const g=memoryGame;if(!g)return;
+ const tile=memoryTile(index);if(!tile)return;
+ tile.classList.toggle('is-flipped',flipped);
+ const id=g.cards[index].id;
+ tile.setAttribute('aria-label',flipped?`Carta ${id}, ${materials[id].nombre}`:`Carta boca abajo, posición ${index+1}`);
+ tile.setAttribute('aria-pressed',String(flipped));
+}
+function selectMemory(index){
+ const g=memoryGame;
+ if(activeMode!=='memory'||!memoryLocked||!g||g.busy||modalOpen||g.done||g.matched.has(index)||g.open.includes(index))return;
+ if(!Number.isInteger(index)||index<0||index>=g.cards.length)return;
+ flipMemory(index,true);g.open.push(index);
+ if(g.open.length<2)return;
+ g.busy=true;
+ const [first,second]=g.open;
+ const round=memoryRound;
+ if(g.cards[first].id!==g.cards[second].id){
+  g.errors++;updateMemoryStats();
+  clearTimeout(memoryTimeout);
+  memoryTimeout=setTimeout(()=>{
+   if(round!==memoryRound||!memoryGame)return;
+   flipMemory(first,false);flipMemory(second,false);g.open=[];g.busy=false;
+  },950);
+  return;
+ }
+ g.matches++;
+ g.matched.add(first);g.matched.add(second);
+ for(const i of [first,second]){
+  const tile=memoryTile(i);
+  tile.classList.add('is-matched');tile.disabled=true;
+  tile.setAttribute('aria-label',`Pareja encontrada: ${materials[g.cards[i].id].nombre}`);
+ }
+ g.open=[];updateMemoryStats();memoryStopClock();memoryPendingDescription=true;
+ // Esperar un instante para que la pareja acertada sea visible antes de abrir la ficha.
+ clearTimeout(memoryTimeout);
+ memoryTimeout=setTimeout(()=>{
+  if(round!==memoryRound||!memoryGame)return;
+  const id=g.cards[first].id;
+  openDescription(id,memoryTile(first));
+  if(!modalOpen){memoryPendingDescription=false;g.busy=false;memoryStartClock();}
+  else{$('randomRating').classList.add('hidden');$('randomFeedback').classList.add('hidden');closeBtn.textContent='ENTENDIDO';}
+ },450);
+}
+function afterMemoryDescription(){
+ const g=memoryGame;
+ if(!g||!memoryPendingDescription)return;
+ memoryPendingDescription=false;g.busy=false;
+ if(g.matches===g.pairs)finishMemory();
+ else memoryStartClock();
+}
+function finishMemory(){
+ const g=memoryGame;if(!g||g.done)return;
+ memoryStopClock();g.done=true;memoryLocked=false;
+ clearInterval(memoryTick);memoryTick=null;
+ setMemoryCompact(false);memoryView('memoryResults');syncButtons();
+ $('memoryResultsSummary').textContent=`¡Encontraste las ${g.pairs} parejas!`;
+ const stats=$('memoryResultsStats');stats.replaceChildren();
+ const attempts=g.matches+g.errors;
+ const accuracy=attempts?100*g.matches/attempts:0;
+ for(const [label,value] of [['Parejas encontradas',`${g.matches} de ${g.pairs}`],['Intentos correctos',g.matches],['Errores',g.errors],['Precisión',`${accuracy.toLocaleString('es-MX',{maximumFractionDigits:1})}%`],['Tiempo de juego',formatMemoryTime(g.elapsed)]]){
+  const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;stats.append(dt,dd);
+ }
+ $('memoryResults').focus({preventScroll:true});
+}
+function resetMemory(){
+ clearTimeout(memoryTimeout);clearInterval(memoryTick);clearTimeout(memoryFitTimer);
+ memoryTimeout=null;memoryTick=null;memoryFitTimer=null;
+ memoryStopClock();memoryRound++;memoryGame=null;memoryPendingDescription=false;memoryLocked=false;
+ setMemoryCompact(false);memoryView('memorySetup');syncButtons();initMemory();$('memoryStart').focus({preventScroll:true});
+}
+$('memoryMode').addEventListener('click',()=>switchMode('memory'));
+$('memoryStart').addEventListener('click',startMemory);
+$('memoryAgain').addEventListener('click',resetMemory);
+$('memoryGrid').addEventListener('click',e=>{
+ const tile=e.target.closest('.memory-tile');
+ if(tile)selectMemory(Number(tile.dataset.index));
+});
+$('memoryAbandon').addEventListener('click',()=>{
+ if(memoryLocked&&!modalOpen&&confirm('¿Abandonar la partida? Perderás los resultados de esta sesión.'))resetMemory();
+});
+document.addEventListener('visibilitychange',()=>{
+ if(!memoryGame||memoryGame.done)return;
+ if(document.hidden)memoryStopClock();else memoryStartClock();
+});
+
+window.addEventListener('resize',handleMemoryResize,{passive:true});
+window.addEventListener('orientationchange',handleMemoryResize,{passive:true});

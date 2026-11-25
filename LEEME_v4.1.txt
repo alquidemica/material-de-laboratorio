@@ -1,0 +1,26 @@
+ALQUIDÉMICA · MEMORAMA BETA v4.1 — TABLERO COMPACTO
+
+Este ZIP contiene ÚNICAMENTE tres archivos que debes sustituir en la raíz de material-de-laboratorio-beta:
+- index.html
+- estilos.css
+- memoria.js
+
+CAMBIOS
+- 4 dificultades: Muy fácil (4 parejas), Normal (6), Difícil (9), Muy difícil (12).
+- Todas las parejas provienen al azar del catálogo completo, sin filtros.
+- Durante la partida se ocultan título, barra de navegación e instrucciones; únicamente quedan marcador, botón Abandonar y tablero.
+- Botón Abandonar dentro de la barra compacta de estadísticas.
+- Dimensiones de las cartas ajustadas al ancho y al alto disponibles, considerando 48px como tamaño mínimo.
+- Distribución celular: 2, 3, 4 y 5 columnas respectivamente; escritorio: 4, 6, 6 y 6.
+- Si el espacio es extremadamente pequeño, puede persistir algo de desplazamiento en vez de volver las cartas inservibles.
+- Se recalculan dimensiones al cambiar el tamaño/orientación; no se reorganizan las parejas durante la partida salvo por el nuevo número de columnas.
+- Caché actualizado a v4.1 en index.html solamente para los archivos editados.
+
+PRUEBAS RECOMENDADAS
+- En celular: 9 y 12 parejas, mirar si aparecen todas sin scroll y las ilustraciones siguen siendo identificables.
+- Girar el teléfono durante la partida.
+- Acertar una pareja: descripción -> ENTENDIDO -> tablero.
+- Abandonar: vuelve la navegación y deja iniciar otra partida.
+- Terminar: resultados y regreso al menú.
+
+Nota: la apertura local automatizada del navegador estuvo restringida en el entorno; validar visualmente en GitHub Pages beta antes de mover a producción.

@@ -1,7 +1,7 @@
 
 :root{--amarillo:#ffd43b;--tinta:#101010;--blanco:#fff8e8;--azul-oscuro:#0d2340}
 *{box-sizing:border-box}html{min-height:100%;}body{margin:0;min-height:100dvh;font-family:Arial,Helvetica,sans-serif;background:#15578b url('fondo-laboratorio.webp') center/cover fixed no-repeat;color:var(--tinta);display:grid;place-items:center;padding:12px}
-.app{width:min(100%,760px);text-align:center}.title{margin:0 0 8px;font-size:clamp(1.45rem,4.8vw,3rem);font-weight:900;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;color:#21d9ff;text-shadow:0 2px 4px #000}
+.app{width:min(100%,760px);text-align:center}.title{margin:0 0 8px;font-size:clamp(1.45rem,4.8vw,3rem);font-weight:1000;text-transform:uppercase;letter-spacing:.02em;line-height:1.05;color:#21d9ff;-webkit-text-stroke:2px var(--azul-oscuro);text-shadow:2px 3px 0 var(--azul-oscuro),-2px -1px 0 var(--azul-oscuro)}
 .stage{display:flex;justify-content:center;align-items:center;min-height:0;margin:auto}.card-shell{width:min(390px,87vw,calc(57dvh * 2 / 3));aspect-ratio:2 / 3;container-type:inline-size;flex-shrink:0;filter:drop-shadow(7px 9px 0 rgba(0,0,0,.27))}
 .card{width:100%;height:100%;position:relative;background:var(--outer,#54cdbc);border:.45cqw solid #101010;border-radius:4.5cqw;overflow:hidden;user-select:none}
 .card-inner{position:absolute;inset:5% 6.3%;background:#fff;border:.23cqw solid #101010;border-radius:6.8cqw;overflow:hidden}
@@ -74,9 +74,65 @@ body.modal-open{overflow:hidden}
 .random-card-icon[data-state="unseen"] [data-icon="unseen"],.random-card-icon[data-state="known"] [data-icon="known"],.random-card-icon[data-state="review"] [data-icon="review"]{display:inline}
 .random-card-icon[data-state="known"]{color:#169447}
 .random-card-icon[data-state="review"]{color:#b58300}
-#randomCard{cursor:pointer}
-#randomCard:focus-visible{outline:3px solid #FFD700;outline-offset:3px}
-#card{cursor:pointer}
-#card:focus-visible{outline:3px solid #FFD700;outline-offset:3px}
+
+/* v4 · Accesibilidad de títulos y cartas clicables */
+.title{font-weight:900;-webkit-text-stroke:0;text-shadow:0 2px 4px #000}
+#card,#randomCard{cursor:pointer}
+#card:focus-visible,#randomCard:focus-visible{outline:3px solid #FFD700;outline-offset:3px}
 #startCoverBtn{display:block;width:100%;background:#32b768;font-size:1.3rem;padding:18px}
-#descriptionModal.cover-dialog #closeDescriptionBtn{background:#ed5454}
+#descriptionModal.cover-dialog #closeDescriptionBtn{display:block;width:100%;background:#ed5454}
+
+/* v4 · Memorama: 6 columnas en escritorio, 4 en tableta, 3 en móvil */
+.memory-setup{text-align:center}
+.memory-setup h2,.memory-results h2{margin:2px 0 12px;color:#21d9ff}
+.memory-levels{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;border:1px solid #8093a9;border-radius:12px;padding:14px 10px;margin:14px 0}
+.memory-levels legend{font-weight:900;padding:0 8px}
+.memory-levels label{display:flex;align-items:center;gap:7px;background:#203e5c;border-radius:10px;padding:9px 12px;cursor:pointer;font-size:.95rem;font-weight:700}
+.memory-levels input,.memory-clock-option input{accent-color:#ffd43b;width:18px;height:18px}
+.memory-clock-option{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 20px;font-weight:700}
+.memory-instruction{background:rgba(13,35,64,.85);color:#FFD700;font-size:1.1rem;font-weight:800;border-radius:10px;padding:10px 12px;text-shadow:0 2px 4px #000}
+.memory-stats{display:flex;justify-content:space-around;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(13,35,64,.9);color:white;padding:11px;margin:10px 0 15px;border-radius:12px;font-weight:800}
+.memory-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;max-width:1040px;margin:0 auto;align-items:start}
+.memory-tile{position:relative;display:block;padding:0;width:100%;min-width:0;aspect-ratio:2/3;box-shadow:2px 3px 0 #101010;border:2px solid #111;border-radius:10px;background:#26bfc8;overflow:hidden;touch-action:manipulation;transition:background .15s ease,opacity .15s ease;user-select:none}
+.memory-tile:not(:disabled):hover{outline:2px solid #FFD700;outline-offset:1px}
+.memory-tile:focus-visible{outline:4px solid #FFD700;outline-offset:2px}
+.memory-tile:not(:disabled):active{transform:none;box-shadow:2px 3px 0 #101010}
+.memory-tile .memory-back{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(145deg,#32c8d8,#157b9e);color:#e9faff;font-size:clamp(1.5rem,5vw,3.8rem);font-weight:900;text-shadow:0 2px 0 #11475c}
+.memory-back::after{content:'ALQUIDÉMICA';position:absolute;bottom:9%;font-size:clamp(.45rem,1vw,.8rem);letter-spacing:.04em}
+.memory-tile .memory-front{display:none;position:absolute;inset:0;background:var(--outer,#54cdbc);padding:6%;color:#111}
+.memory-front-inner{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;width:100%;height:100%;background:#fff;border:1px solid #111;border-radius:8%;padding:5% 4%;overflow:hidden}
+.memory-front-number{font-weight:900;align-self:flex-start;font-size:clamp(.65rem,1.5vw,1.1rem);line-height:1}
+.memory-front-img{width:96%;height:69%;object-fit:fill;display:block}
+.memory-front-name{display:flex;align-items:center;justify-content:center;font-size:clamp(.42rem,.95vw,.8rem);font-weight:900;line-height:1.07;text-transform:uppercase;text-align:center;overflow-wrap:normal;hyphens:none;width:100%;min-height:17%}
+.memory-tile.is-flipped .memory-front,.memory-tile.is-matched .memory-front{display:block}
+.memory-tile.is-flipped .memory-back,.memory-tile.is-matched .memory-back{display:none}
+.memory-tile.is-matched{opacity:.72;border-color:#188251;background:#baf7d0}
+.memory-tile.is-matched .memory-front-inner{outline:3px solid #27ab74;outline-offset:-3px}
+.memory-results{text-align:center}
+.memory-results #memoryResultsSummary{font-weight:800;font-size:1.15rem;color:#fff}
+.memory-results dl{display:grid;grid-template-columns:1fr auto;gap:12px;text-align:left;margin:20px 0}
+.memory-results dd{margin:0;font-weight:900}
+@media(max-width:849px){.memory-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}}
+@media(max-width:599px){.memory-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.memory-tile{border-radius:7px}.memory-front-inner{border-radius:6px}.memory-front-number{font-size:.67rem}.memory-front-name{font-size:clamp(.41rem,1.75vw,.68rem)}.memory-back::after{font-size:.42rem}.memory-stats{font-size:.79rem}.memory-instruction{font-size:1rem}.memory-levels label{flex:1 1 130px;justify-content:center;font-size:.8rem}}
+
+/* v4.1 beta — Memorama sin desplazamiento innecesario. Durante la
+   partida la navegación y el título desaparecen; el tablero aprovecha
+   el espacio sobrante y JS calcula su tamaño según columnas y filas. */
+.app.memory-playing{width:min(100%,1240px);padding:0;margin:0 auto}
+.app.memory-playing>.title,.app.memory-playing>.mode-nav{display:none}
+body.memory-playing{padding:6px 8px;display:block}
+.memory-playing #memoryPanel{padding:0;margin:0}
+.memory-playing .memory-stats{margin:0 auto 6px;max-width:1040px;padding:5px 8px;min-height:38px;gap:6px;font-size:clamp(.75rem,2.5vw,.95rem)}
+.memory-playing .memory-stats .abandon-btn{margin:0;padding:5px 7px;font-size:.73rem;border-width:2px;border-radius:8px;box-shadow:1px 2px 0 #111}
+.memory-playing .memory-grid{grid-template-columns:repeat(var(--memory-cols,6),var(--memory-card-width,100px));gap:var(--memory-gap,9px);width:max-content;max-width:100%;justify-content:center;margin:0 auto}
+.memory-playing .memory-tile{width:var(--memory-card-width,100px);min-width:0;box-shadow:1px 2px 0 #101010;border-width:1px;border-radius:5px}
+.memory-playing .memory-back::after{font-size:clamp(.34rem,1vw,.65rem);letter-spacing:0}
+.memory-playing .memory-front-inner{padding:3% 2%}
+.memory-playing .memory-front-number{font-size:clamp(.56rem,1vw,.95rem)}
+.memory-playing .memory-front-name{font-size:clamp(.36rem,.8vw,.7rem)}
+@media(max-width:599px){
+ .memory-playing .memory-stats{font-size:.7rem;flex-wrap:nowrap;gap:4px;justify-content:space-between}
+ .memory-playing .memory-stats .abandon-btn{font-size:.61rem;padding:5px 4px}
+ .memory-playing .memory-front-name{font-size:clamp(.31rem,1.5vw,.59rem);line-height:1.02}
+ .memory-playing .memory-front-img{height:65%}
+}

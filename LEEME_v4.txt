@@ -1,0 +1,42 @@
+ALQUIDÉMICA · MATERIAL DE LABORATORIO — BETA v4.0
+
+MODOS
+1. Lotería: barajado de 42 cartas y descripción individual.
+2. Estudio libre: parrilla adaptable, buscador y filtros.
+3. Estudio aleatorio: autoevaluación y repaso al final del mazo.
+4. Memoria visual (nuevo): 4, 6 o 12 parejas de imágenes del catálogo completo.
+
+MEMORIA
+- Se seleccionan materiales aleatorios distintos entre los 42 disponibles, sin filtrar por categoría.
+- Cada material aparece exactamente dos veces. El orden cambia cada partida.
+- Al tocar dos cartas: si no coinciden, se contabiliza un error y vuelven a ocultarse.
+- Al encontrar una pareja, se presenta automáticamente la descripción del instrumento.
+- Al pulsar ENTENDIDO se regresa al mismo tablero. Las parejas quedan descubiertas.
+- Durante la sesión los demás modos quedan bloqueados. "Abandonar partida" desbloquea sin registrar resultado.
+- Resultados: parejas, intentos correctos, errores, precisión y tiempo de juego.
+- El cronómetro se detiene durante el cuadro informativo y cuando la pestaña está oculta.
+- La opción "Mostrar cronómetro" oculta la cifra durante el juego, pero registra el tiempo final.
+
+ARCHIVOS MODIFICADOS RESPECTO A v3.1
+- index.html: nuevo panel de Memoria, navegación y diálogo de portada.
+- estilos.css: estilos adaptables de memoria y mejora tipográfica.
+- aplicacion.js: bloqueo de navegación entre modos, diálogo compartido y caché de ilustraciones.
+- estudio.js: integración de navegación y título "Memoria".
+- estudio-aleatorio.js: interacción clicable con la carta.
+- memoria.js: NUEVO. Estado, selección, parejas, cronómetro y resultados.
+- cartas/10.webp, cartas/12.webp, cartas/18.webp: revisiones de ilustración integradas.
+
+No se han cambiado materiales.json ni las demás cartas.
+Se incluye el paquete completo para PRUEBAS EN BETA; no publicar en producción antes de validarlo.
+
+PUBLICACIÓN
+- Subir los archivos a material-de-laboratorio-beta, dejando index.html en la raíz.
+- GitHub Pages: Deploy from a branch / main / (root).
+- Probar Firefox en escritorio y celular, especialmente 4/6/12 parejas y cierre de descripciones.
+- Antes de pasar a producción comparar los cambios con la versión que esté actualmente publicada.
+
+NOTA DE VERSIÓN
+Los archivos base utilizados aquí corresponden al ZIP v3.0 y a la actualización v3.1 previamente entregados.
+Se incorporaron además cambios posteriores descritos en esta conversación (títulos abreviados, cartas clicables,
+diálogo de portada y versión de caché de imágenes). Si hiciste otros cambios después en GitHub, revísalos
+antes de reemplazar archivos; el paquete no fue extraído directamente de tu repositorio en vivo.
