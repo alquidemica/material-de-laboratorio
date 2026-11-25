@@ -39,49 +39,54 @@ function updateMemoryStats(){
  $('memoryErrorsStatus').textContent=`Errores: ${g.errors}`;
  $('memoryTimeStatus').textContent=`Tiempo: ${formatMemoryTime(memoryDuration(g))}`;
 }
-/* v4.2: Selecciona columnas y filas según el espacio real disponible.
-   La secuencia de cartas y las parejas ya encontradas NO se modifican. */
+/* v4.3.1: El tablero debe CABER en el viewport antes de maximizar
+   la carta. No se usa la posición del tablero respecto al scroll. */
 function chooseMemoryLayout(cardCount, availableWidth, availableHeight, gap, maxCardWidth=165){
  let best=null;
- // Acotamos a 12 columnas: evita filas excesivamente largas en pantallas anchas.
  for(let cols=2;cols<=Math.min(cardCount,12);cols++){
   const rows=Math.ceil(cardCount/cols);
-  // Evitamos dejar una última fila con menos de la mitad de sus posiciones.
   const finalRow=cardCount-(rows-1)*cols;
   if(rows>1&&finalRow<Math.ceil(cols/2))continue;
   const widthBySpace=(availableWidth-gap*(cols-1))/cols;
-  const widthByHeight=((availableHeight-gap*(rows-1))/rows)*(2/3);
+  const widthByHeight=(availableHeight-gap*(rows-1))/rows*2/3;
   const size=Math.min(widthBySpace,widthByHeight,maxCardWidth);
   if(!Number.isFinite(size)||size<=0)continue;
-  // Gana la carta más grande. En empates, menos filas y tablero más compacto.
+  // Solo comparamos configuraciones que caben por ANCHO y ALTO.
+  const fits=size*cols+gap*(cols-1)<=availableWidth+.1&&
+             size*1.5*rows+gap*(rows-1)<=availableHeight+.1;
+  if(!fits)continue;
   if(!best||size>best.size+0.5||
      (Math.abs(size-best.size)<=0.5&&(rows<best.rows||
       (rows===best.rows&&cols<best.cols)))){
    best={cols,rows,size};
   }
  }
- return best||{cols:2,rows:Math.ceil(cardCount/2),size:48};
+ return best;
 }
 function fitMemoryBoard(){
  const g=memoryGame,grid=$('memoryGrid');
  if(!g||!memoryLocked||!grid||$('memorySession').classList.contains('hidden'))return;
  const viewportWidth=document.documentElement.clientWidth;
  const gap=viewportWidth<=599?4:window.innerHeight<=550?5:viewportWidth<=849?7:9;
- // La parrilla tiene max-width de 1040px en CSS.
- const availableWidth=Math.min(grid.parentElement.clientWidth,1040);
- // El desplazamiento NO debe alterar el presupuesto vertical del tablero.
- // getBoundingClientRect().top cambia al hacer scroll y, tras rotar,
- // puede ser negativo: en esa situación se escogían 3 columnas en vez de 4.
+ const availableWidth=Math.max(1,Math.min(grid.parentElement.clientWidth,1040));
  const stats=$('memorySession').querySelector('.memory-stats');
- const statsHeight=stats?.offsetHeight||0;
- const availableHeight=Math.max(0,window.innerHeight-statsHeight-24);
+ // En móviles, innerHeight puede ser mayor que el área verdaderamente visible
+ // por las barras de Chrome. Tomamos la medida más conservadora.
+ const heights=[window.innerHeight,document.documentElement.clientHeight,
+                window.visualViewport?.height].filter(n=>Number.isFinite(n)&&n>0);
+ const viewportHeight=Math.min(...heights);
+ const statsHeight=stats?.getBoundingClientRect().height||0;
+ // body: 6px arriba + 6px abajo; separación de marcador: 6px;
+ // margen de seguridad adicional: 24px (barra inferior y redondeos).
+ const availableHeight=Math.max(1,viewportHeight-statsHeight-42);
  const best=chooseMemoryLayout(g.cards.length,availableWidth,availableHeight,gap,viewportWidth<=599?120:165);
- // Si la pantalla es demasiado pequeña, priorizar una zona pulsable de 48px;
- // se permite un leve desplazamiento en vez de hacer cartas ilegibles.
- const size=Math.max(48,best.size);
+ if(!best)return;
+ // Solo aceptamos un mínimo de 44px si aún cabe. Si ninguna distribución
+ // alcanza ese mínimo, dejamos el tamaño real y permitimos interacción.
+ const size=Math.floor(best.size*10)/10;
  grid.style.setProperty('--memory-cols',best.cols);
  grid.style.setProperty('--memory-gap',`${gap}px`);
- grid.style.setProperty('--memory-card-width',`${Math.floor(size*10)/10}px`);
+ grid.style.setProperty('--memory-card-width',`${size}px`);
  grid.setAttribute('aria-label',`Tablero de memorama, ${best.cols} columnas y ${best.rows} filas`);
 }
 function scheduleMemoryFit(){
