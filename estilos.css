@@ -136,3 +136,16 @@ body.memory-playing{padding:6px 8px;display:block}
  .memory-playing .memory-front-name{font-size:clamp(.31rem,1.5vw,.59rem);line-height:1.02}
  .memory-playing .memory-front-img{height:65%}
 }
+
+/* v4.3.2 — Resultados del memorama: columnas cercanas y legibles. */
+#memoryResultsStats{
+  width:100%;
+  max-width:440px;
+  margin:20px auto;
+  grid-template-columns:minmax(0,1fr) auto;
+  column-gap:20px;
+  row-gap:12px;
+}
+#memoryResultsStats dt{min-width:0;overflow-wrap:break-word}
+#memoryResultsStats dd{text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:480px){#memoryResultsStats{max-width:360px;column-gap:12px;font-size:.9rem}}

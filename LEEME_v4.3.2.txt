@@ -1,0 +1,4 @@
+Parche v4.3.2: solo tabla de resultados del memorama.
+Reemplazar index.html y estilos.css en el repositorio beta.
+No cambia memoria.js ni otros archivos.
+Se limita el ancho de las estadísticas a 440px, centrado y adaptable a pantallas pequeñas.
